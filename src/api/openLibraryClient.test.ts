@@ -38,7 +38,96 @@ describe('searchBooks', () => {
     ]);
   });
 
+  it('maps docs with only required fields and strips the leading slash from key', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          docs: [{ key: '/works/OL123W', title: 'Minimal Book' }],
+        }),
+      })
+    );
+
+    const results = await searchBooks('minimal');
+
+    expect(results).toEqual([{ id: 'works/OL123W', title: 'Minimal Book' }]);
+  });
+
+  it('trims whitespace from the query before searching', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ docs: [] }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await searchBooks('  dune  ');
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('q=dune')
+    );
+  });
+
+  it('returns an empty array when docs is empty', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ docs: [] }),
+      })
+    );
+
+    await expect(searchBooks('nothing-here')).resolves.toEqual([]);
+  });
+
+  it('returns an empty array when docs is missing', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      })
+    );
+
+    await expect(searchBooks('missing-docs')).resolves.toEqual([]);
+  });
+
+  it('skips docs missing key or title', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          docs: [
+            { title: 'No Key' },
+            { key: '/works/OL999W' },
+            { key: '/works/OL100W', title: 'Valid Book' },
+          ],
+        }),
+      })
+    );
+
+    const results = await searchBooks('books');
+
+    expect(results).toEqual([{ id: 'works/OL100W', title: 'Valid Book' }]);
+  });
+
+  it('uses the provided limit in the search URL', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ docs: [] }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await searchBooks('dune', { limit: 3 });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('limit=3')
+    );
+  });
+
   it('throws when query is empty', async () => {
+    await expect(searchBooks('')).rejects.toBeInstanceOf(OpenLibraryError);
     await expect(searchBooks('   ')).rejects.toBeInstanceOf(OpenLibraryError);
   });
 
@@ -63,5 +152,22 @@ describe('searchBooks', () => {
     await expect(searchBooks('dune')).rejects.toThrow(
       'Open Library returned HTTP 503 for search query'
     );
+  });
+
+  it('throws when the response body is not valid JSON', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => {
+          throw new SyntaxError('Unexpected token');
+        },
+      })
+    );
+
+    await expect(searchBooks('dune')).rejects.toMatchObject({
+      name: 'OpenLibraryError',
+      message: 'Failed to parse Open Library response as JSON',
+    });
   });
 });
