@@ -33,6 +33,8 @@ export class OpenLibraryError extends Error {
 }
 
 function buildSearchUrl(baseUrl: string, path: string, query: string, limit: number): string {
+  // Absolute paths (starting with /) replace the base URL path — fine for openlibrary.org root.
+  // TMDB uses a relative path + trailing slash base instead; see config.tmdbBaseUrl.
   const url = new URL(path, baseUrl);
   url.searchParams.set('q', query.trim());
   url.searchParams.set('limit', String(limit));

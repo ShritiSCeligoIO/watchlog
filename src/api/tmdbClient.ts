@@ -58,6 +58,8 @@ function buildSearchUrl(
   query: string,
   apiKey: string
 ): string {
+  // Use a relative path (no leading slash) with a trailing-slash base URL
+  // so the /3/ segment is preserved — see config.tmdbBaseUrl.
   const url = new URL(path, baseUrl);
   url.searchParams.set('api_key', apiKey);
   url.searchParams.set('query', query.trim());

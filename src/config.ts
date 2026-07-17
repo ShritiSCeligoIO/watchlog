@@ -16,3 +16,17 @@ export const config = {
   tmdbBaseUrl: 'https://api.themoviedb.org/3/',
   tmdbSearchMoviePath: 'search/movie',
 } as const;
+
+/**
+ * Validates env vars required for movie search.
+ * Call from a future app entry point (Stage 2+) before serving traffic.
+ * Utils and book search work without this.
+ */
+export function validateMovieSearchConfig(): void {
+  if (config.tmdbApiKey) {
+    return;
+  }
+
+  console.error('logName=requiredEnvVarMissing, envVar=TMDB_API_KEY');
+  process.exit(1);
+}

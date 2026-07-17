@@ -6,6 +6,20 @@ describe('searchBooks', () => {
     vi.unstubAllGlobals();
   });
 
+  it('requests the Open Library search.json endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ docs: [] }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await searchBooks('dune');
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringMatching(/^https:\/\/openlibrary\.org\/search\.json\?/)
+    );
+  });
+
   it('maps Open Library docs into normalized book search results', async () => {
     vi.stubGlobal(
       'fetch',

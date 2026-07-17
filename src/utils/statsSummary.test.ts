@@ -141,7 +141,7 @@ describe('statsSummary', () => {
     expect(stats.averageRating).toBe(4);
   });
 
-  it('counts all rated items toward averageRating regardless of status', () => {
+  it('ignores ratings on non-done items when computing averageRating', () => {
     const items: WatchlistItem[] = [
       {
         id: 'book-1',
@@ -166,6 +166,6 @@ describe('statsSummary', () => {
     const stats = statsSummary(items);
 
     expect(stats.completionRate).toBeCloseTo(0.5);
-    expect(stats.averageRating).toBe(3.5);
+    expect(stats.averageRating).toBe(2);
   });
 });

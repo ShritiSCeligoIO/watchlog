@@ -1,6 +1,3 @@
-/** Supported media kinds in WatchLog. */
-export type MediaType = 'movie' | 'book';
-
 /** Three-step status flow from the project brief. */
 export type WatchStatus = 'want' | 'watching' | 'done';
 
@@ -53,7 +50,7 @@ export interface WatchlistStats {
   totalCount: number;
   /** Fraction of items with status `done`, 0–1. Returns 0 when list is empty. */
   completionRate: number;
-  /** Mean rating across rated (done) items. null when none are rated. */
+  /** Mean rating across done items that have a star rating. null when none qualify. */
   averageRating: number | null;
 }
 
