@@ -4,7 +4,7 @@ TypeScript utility kit for a personal movie and book watchlist. Stage 1 is a pur
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22.11.0 (same as integrator-ui)
 - npm
 
 ## Setup
