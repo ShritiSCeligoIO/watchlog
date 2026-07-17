@@ -22,8 +22,11 @@ export const config = {
  * Call from a future app entry point (Stage 2+) before serving traffic.
  * Utils and book search work without this.
  */
-export function validateMovieSearchConfig(): void {
-  if (config.tmdbApiKey) {
+export function validateMovieSearchConfig(
+  options: { tmdbApiKey?: string } = {}
+): void {
+  const apiKey = options.tmdbApiKey ?? config.tmdbApiKey;
+  if (apiKey) {
     return;
   }
 
