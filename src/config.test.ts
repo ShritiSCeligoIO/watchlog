@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { config, validateMovieSearchConfig } from './config.js';
+import {
+  config,
+  isMovieSearchConfigured,
+  validateMovieSearchConfig,
+  warnIfMovieSearchUnavailable,
+} from './config.js';
 
 describe('validateMovieSearchConfig', () => {
   afterEach(() => {
@@ -47,5 +52,38 @@ describe('validateMovieSearchConfig', () => {
       'logName=requiredEnvVarMissing, envVar=TMDB_API_KEY'
     );
     expect(exitSpy).toHaveBeenCalledWith(1);
+  });
+});
+
+describe('isMovieSearchConfigured', () => {
+  it('returns true when config has a TMDB key', () => {
+    if (!config.tmdbApiKey) {
+      expect(isMovieSearchConfigured()).toBe(false);
+      return;
+    }
+
+    expect(isMovieSearchConfigured()).toBe(true);
+  });
+});
+
+describe('warnIfMovieSearchUnavailable', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('warns when TMDB is not configured', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    if (config.tmdbApiKey) {
+      warnIfMovieSearchUnavailable();
+      expect(warnSpy).not.toHaveBeenCalled();
+      return;
+    }
+
+    warnIfMovieSearchUnavailable();
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      'logName=movieSearchUnavailable, message=Set TMDB_API_KEY or VITE_TMDB_API_KEY in .env at the repo root for movie search'
+    );
   });
 });

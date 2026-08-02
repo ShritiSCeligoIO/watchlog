@@ -74,7 +74,12 @@ function mapDocToResult(doc: OpenLibraryDoc): BookSearchResult | null {
  */
 export async function searchBooks(
   query: string,
-  options: { limit?: number; baseUrl?: string; searchPath?: string } = {}
+  options: {
+    limit?: number;
+    baseUrl?: string;
+    searchPath?: string;
+    signal?: AbortSignal;
+  } = {}
 ): Promise<BookSearchResult[]> {
   const trimmed = query.trim();
   if (!trimmed) {
@@ -88,8 +93,15 @@ export async function searchBooks(
 
   let response: Response;
   try {
-    response = await fetch(url);
+    const init: RequestInit = {};
+    if (options.signal) {
+      init.signal = options.signal;
+    }
+    response = await fetch(url, init);
   } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw error;
+    }
     throw new OpenLibraryError('Network request to Open Library failed', error);
   }
 

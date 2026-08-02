@@ -109,7 +109,13 @@ function mapDocToResult(doc: TmdbMovieDoc): MovieSearchResult | null {
  */
 export async function searchMovies(
   query: string,
-  options: { limit?: number; apiKey?: string; baseUrl?: string; searchPath?: string } = {}
+  options: {
+    limit?: number;
+    apiKey?: string;
+    baseUrl?: string;
+    searchPath?: string;
+    signal?: AbortSignal;
+  } = {}
 ): Promise<MovieSearchResult[]> {
   const trimmed = query.trim();
   if (!trimmed) {
@@ -119,7 +125,7 @@ export async function searchMovies(
   const apiKey = options.apiKey ?? config.tmdbApiKey;
   if (!apiKey) {
     throw new TmdbError(
-      'TMDB API key is not configured. Set TMDB_API_KEY in your environment.'
+      'TMDB API key is not configured. Add TMDB_API_KEY (or VITE_TMDB_API_KEY) to .env at the repo root and restart the dev server.'
     );
   }
 
@@ -130,8 +136,15 @@ export async function searchMovies(
 
   let response: Response;
   try {
-    response = await fetch(url);
+    const init: RequestInit = {};
+    if (options.signal) {
+      init.signal = options.signal;
+    }
+    response = await fetch(url, init);
   } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw error;
+    }
     throw new TmdbError('Network request to TMDB failed', error);
   }
 

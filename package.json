@@ -7,16 +7,26 @@
     "node": "22.11.0"
   },
   "scripts": {
-    "build": "tsc",
+    "dev": "vite",
+    "build": "rm -rf dist && tsc -p tsconfig.lib.json",
+    "build:app": "vite build",
+    "build:lib": "rm -rf dist && tsc -p tsconfig.lib.json",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
-    "dotenv": "16.4.7"
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-router-dom": "6.28.0"
   },
   "devDependencies": {
     "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "@types/react-dom": "19.0.4",
+    "@vitejs/plugin-react": "4.3.4",
+    "dotenv": "16.4.7",
     "typescript": "5.7.3",
+    "vite": "6.0.11",
     "vitest": "3.0.5"
   }
 }

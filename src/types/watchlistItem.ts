@@ -35,7 +35,12 @@ export type WatchlistItem = MovieWatchlistItem | BookWatchlistItem;
  * Partial update payload — every field optional except identity fields we omit.
  * Demonstrates `Partial` + `Omit` utility types.
  */
-export type WatchlistItemUpdate = Partial<Omit<WatchlistItem, 'id' | 'type'>>;
+export type WatchlistItemUpdate = Partial<
+  Omit<WatchlistItem, 'id' | 'type' | 'rating'>
+> & {
+  /** Pass `null` to remove an existing star rating. */
+  rating?: StarRating | null;
+};
 
 /**
  * Lightweight row for list views — demonstrates `Pick`.

@@ -1,6 +1,6 @@
-# WatchLog — Stage 1
+# WatchLog — Stage 3 complete
 
-TypeScript utility kit for a personal movie and book watchlist. Stage 1 is a pure library (no UI): typed data model, list utilities, book/movie search APIs, and unit tests.
+Personal movie and book watchlist. Stage 1 is a TypeScript library; Stage 2 added React UI; Stage 3 adds React Router v6 multi-page navigation.
 
 ## Prerequisites
 
@@ -14,30 +14,73 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` and add your [TMDB API key](https://www.themoviedb.org/settings/api) for movie search. Open Library book search works without a key.
+Edit `.env` at the **repo root** (same folder as `package.json`):
+
+- **Book search** — works with no API key (Open Library).
+- **Movie search** — set `TMDB_API_KEY` (Vite exposes it to the browser via `envPrefix`; restart `npm run dev` after changes).
+
+Get a free TMDB key: https://www.themoviedb.org/settings/api
 
 ## Scripts
 
 | Command | Description |
 |---------|-------------|
+| `npm run dev` | Start Vite dev server (React app) |
 | `npm test` | Run all unit tests |
 | `npm run test:watch` | Run tests in watch mode |
-| `npm run build` | Compile `src/` to `dist/` |
+| `npm run build` | Compile Stage 1 library (`src/` → `dist/`) |
+| `npm run build:app` | Production React bundle (`src/` → `build/`) |
+
+## Stage 3 features
+
+- **Multi-page routing** — `BrowserRouter`, nested routes, `Outlet` layout
+- **Pages** — `/watchlist` (list), `/items/:itemId` (detail), `/items/:itemId/edit` (edit)
+- **Deep links** — every item has a shareable URL
+- **Auth guard** — edit page protected; mock sign-in at `/login`
+- **NavLink** — active section highlight in the nav bar
+- **URL filters** — `?type=movie&status=want` survives refresh (`useSearchParams`)
+
+## Stage 2 features (still in the app)
+
+- **SearchPanel** — book + movie search with loading/error states
+- **useMediaSearch** — custom hook with `AbortController` cancel on re-type
+- **ErrorBoundary** — catches render errors at the app root
 
 ## Project structure
 
+Flat layout — fewer folders, one file per thing:
+
 ```text
-src/
-├── types/          WatchlistItem data model
-├── utils/          filter, sort, group, stats
-├── api/            Open Library + TMDB clients
-├── fixtures/       Shared mock data for tests
-└── config.ts       Environment variables (single source)
+WatchLog/
+├── vite.config.ts
+├── tsconfig.json
+├── tsconfig.lib.json       Stage 1 library → dist/
+├── tsconfig.app.json       React UI type-checking
+│
+└── src/
+    ├── index.html
+    ├── index.tsx           Lazy entry → bootstrap
+    ├── bootstrap.tsx       ReactDOM mount + BrowserRouter + ErrorBoundary
+    ├── App.tsx             Route definitions + providers
+    ├── pages/              WatchlistPage, ItemDetailPage, ItemEditPage, LoginPage
+    ├── fixtures/seedWatchlist.ts   Starting watchlist data
+    ├── utils/searchMappers.ts      Search hit → watchlist item
+    ├── components/         SearchPanel, cards, AppLayout, ProtectedRoute
+    ├── hooks/              useMediaSearch, useWatchlistFilters
+    ├── context/            WatchlistDataContext, AuthContext
+    ├── constants/          Min search length, etc.
+    ├── lib/                Stage 1 public barrel export
+    ├── types/              WatchlistItem data model
+    ├── utils/              filter, sort, group, stats (Stage 1)
+    ├── api/                Open Library + TMDB clients
+    ├── fixtures/           Shared mock data for tests
+    ├── styles/             stage2-layout.css
+    └── config.ts           Environment variables (single source)
 ```
 
-Tests live beside source files (`*.test.ts`), matching integrator-ui conventions.
+Tests live beside source files (`*.test.ts` / `*.test.tsx`), matching integrator-ui conventions.
 
-## Try a live search
+## Try a live search (Stage 1 library)
 
 ```bash
 npm run build
@@ -55,9 +98,31 @@ node --input-type=module -e "
 "
 ```
 
-## Stage 2+
+## Environment validation
 
-When you add a React app entry point, call `validateMovieSearchConfig()` from `config.ts` at startup if the app uses movie search — it fails fast when `TMDB_API_KEY` is missing.
+- **Browser** — `bootstrap.tsx` calls `warnIfMovieSearchUnavailable()` if `TMDB_API_KEY` (or `VITE_TMDB_API_KEY`) is missing (movie search shows an error from the API client).
+- **Node/CLI** — call `validateMovieSearchConfig()` before movie search scripts; it exits non-zero when `TMDB_API_KEY` is missing.
+
+## Stage 2 + 3 submission checklist
+
+Use this before you demo or submit tomorrow:
+
+| Check | How to verify |
+|-------|----------------|
+| All tests pass | `npm test` |
+| Library builds | `npm run build` |
+| App builds | `npm run build:app` |
+| Type-check | `npx tsc -b` |
+| Dev server | `npm run dev` → open `/watchlist` |
+| URL filters | Change type/status → URL updates; refresh keeps filters |
+| Deep links | Open `/items/movie-1` directly |
+| Auth guard | Visit `/items/movie-1/edit` while signed out → `/login` |
+| Edit flow | Sign in → edit status/genre/rating → detail page updates |
+| Search | Book search works without API key; movie search needs `.env` |
+
+**Note for reviewers:** Stage 2 originally used React Context for list selection. Stage 3 replaced that with URL-based routing (`/items/:itemId`) and `WatchlistDataContext` for shared watchlist state. Selection is now driven by the route, not a separate selection context.
+
+Watchlist data resets on refresh — persistence is planned for a later stage.
 
 ## Repository
 

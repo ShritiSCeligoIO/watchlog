@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/App.tsx",
+    "src/pages/**/*",
+    "src/fixtures/seedWatchlist.ts",
+    "src/utils/searchMappers.ts",
+    "src/utils/filterWatchlistItems.ts",
+    "src/components/**/*",
+    "src/hooks/**/*",
+    "src/context/**/*",
+    "src/constants/**/*",
+    "src/bootstrap.tsx",
+    "src/index.tsx",
+    "src/vite-env.d.ts"
+  ]
+}

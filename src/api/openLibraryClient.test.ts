@@ -16,7 +16,8 @@ describe('searchBooks', () => {
     await searchBooks('dune');
 
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringMatching(/^https:\/\/openlibrary\.org\/search\.json\?/)
+      expect.stringMatching(/^https:\/\/openlibrary\.org\/search\.json\?/),
+      {}
     );
   });
 
@@ -78,7 +79,8 @@ describe('searchBooks', () => {
     await searchBooks('  dune  ');
 
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('q=dune')
+      expect.stringContaining('q=dune'),
+      {}
     );
   });
 
@@ -136,7 +138,8 @@ describe('searchBooks', () => {
     await searchBooks('dune', { limit: 3 });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('limit=3')
+      expect.stringContaining('limit=3'),
+      {}
     );
   });
 
@@ -183,5 +186,21 @@ describe('searchBooks', () => {
       name: 'OpenLibraryError',
       message: 'Failed to parse Open Library response as JSON',
     });
+  });
+
+  it('passes AbortSignal to fetch and rethrows AbortError', async () => {
+    const controller = new AbortController();
+    const abortError = new DOMException('Aborted', 'AbortError');
+    const fetchMock = vi.fn().mockRejectedValue(abortError);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      searchBooks('dune', { signal: controller.signal })
+    ).rejects.toBe(abortError);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      { signal: controller.signal }
+    );
   });
 });

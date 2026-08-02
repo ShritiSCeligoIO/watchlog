@@ -18,7 +18,8 @@ describe('searchMovies', () => {
     await searchMovies('dune', { apiKey: TEST_API_KEY });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('https://api.themoviedb.org/3/search/movie')
+      expect.stringContaining('https://api.themoviedb.org/3/search/movie'),
+      {}
     );
   });
 
@@ -122,7 +123,8 @@ describe('searchMovies', () => {
     await searchMovies('  dune  ', { apiKey: TEST_API_KEY });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('query=dune')
+      expect.stringContaining('query=dune'),
+      {}
     );
   });
 
@@ -250,5 +252,21 @@ describe('searchMovies', () => {
       name: 'TmdbError',
       message: 'Failed to parse TMDB response as JSON',
     });
+  });
+
+  it('passes AbortSignal to fetch and rethrows AbortError', async () => {
+    const controller = new AbortController();
+    const abortError = new DOMException('Aborted', 'AbortError');
+    const fetchMock = vi.fn().mockRejectedValue(abortError);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      searchMovies('dune', { apiKey: TEST_API_KEY, signal: controller.signal })
+    ).rejects.toBe(abortError);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      { signal: controller.signal }
+    );
   });
 });

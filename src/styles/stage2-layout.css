@@ -1,0 +1,381 @@
+/**
+ * Stage 2 temporary layout — delete this file when Tailwind is added.
+ * Basic CSS only. Class prefix: watchlog-
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #222;
+  background: #f5f5f5;
+}
+
+.watchlog-app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.watchlog-header {
+  margin-bottom: 1.5rem;
+}
+
+.watchlog-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.watchlog-header p {
+  margin: 0.25rem 0 0;
+  color: #666;
+}
+
+.watchlog-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.watchlog-nav__link {
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  color: #2563eb;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.watchlog-nav__link.is-active {
+  color: #fff;
+  background: #2563eb;
+}
+
+.watchlog-nav__link--button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.watchlog-nav__link--button:hover {
+  background: #eef4ff;
+}
+
+.watchlog-filters {
+  margin-bottom: 1rem;
+}
+
+.watchlog-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.watchlog-detail-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.watchlog-edit-form {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.watchlog-card__title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.watchlog-card__title-link:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.watchlog-page-meta {
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.watchlog-layout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.watchlog-list-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.watchlog-panel {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.watchlog-section-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.watchlog-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.watchlog-form input,
+.watchlog-form select {
+  padding: 0.5rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.watchlog-form input[type='search'] {
+  flex: 1;
+  min-width: 160px;
+}
+
+.watchlog-btn {
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.watchlog-btn--primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.watchlog-btn--primary:hover {
+  background: #1d4ed8;
+}
+
+.watchlog-btn--secondary {
+  background: #fff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.watchlog-btn--secondary:hover {
+  background: #eff6ff;
+}
+
+.watchlog-btn--ghost:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.watchlog-btn--danger {
+  background: #fff;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.watchlog-btn--danger:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+}
+
+.watchlog-btn--sm {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.875rem;
+}
+
+.watchlog-list-heading {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.watchlog-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.watchlog-card {
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.watchlog-card:hover {
+  border-color: #999;
+}
+
+.watchlog-card.is-selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.watchlog-card h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.watchlog-card__meta {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.watchlog-card__rating {
+  margin: 0.35rem 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.watchlog-card-actions {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.watchlog-card-actions .watchlog-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.5rem;
+}
+
+.watchlog-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  background: #eee;
+  border-radius: 4px;
+}
+
+.watchlog-badge--movie {
+  background: #dbeafe;
+}
+
+.watchlog-badge--book {
+  background: #d1fae5;
+}
+
+.watchlog-badge--watching {
+  background: #fef3c7;
+}
+
+.watchlog-badge--done {
+  background: #d1fae5;
+}
+
+.watchlog-search-results {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.watchlog-search-hit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.watchlog-search-hit:last-child {
+  border-bottom: none;
+}
+
+.watchlog-hint,
+.watchlog-status {
+  margin: 0.5rem 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.watchlog-error {
+  margin: 0.5rem 0 0;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.watchlog-detail-panel {
+  flex: 0 0 260px;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.watchlog-detail-panel--empty {
+  color: #666;
+  font-style: italic;
+}
+
+.watchlog-detail-panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.watchlog-detail-panel__badges {
+  margin-bottom: 0.75rem;
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.watchlog-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+.watchlog-detail-row dt {
+  margin: 0;
+  color: #666;
+}
+
+.watchlog-detail-row dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.watchlog-detail-panel .watchlog-btn {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+@media (max-width: 700px) {
+  .watchlog-layout {
+    flex-direction: column;
+  }
+
+  .watchlog-detail-panel {
+    flex: none;
+    width: 100%;
+  }
+}
