@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 /**
  * Central config — all env reads live here.
  * Browser: Vite exposes VITE_* via import.meta.env (no dotenv in the bundle).

@@ -1,6 +1,12 @@
+import { useState } from 'react';
 import { Link, useMatch } from 'react-router-dom';
 import type { WatchlistItem } from '../types/watchlistItem.js';
 import { hasRating } from '../types/watchlistItem.js';
+import { cn } from '../lib/utils';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import RemoveItemDialog from './RemoveItemDialog';
+import { watchlistCardVariants } from './watchlistCardVariants';
 
 interface WatchlistItemCardProps {
   item: WatchlistItem;
@@ -15,57 +21,65 @@ export default function WatchlistItemCard({
 }: WatchlistItemCardProps) {
   const detailMatch = useMatch(`/items/${item.id}`);
   const isSelected = Boolean(detailMatch);
+  const [removeOpen, setRemoveOpen] = useState(false);
 
   return (
-    <article
-      className={isSelected ? 'watchlog-card is-selected' : 'watchlog-card'}
-      data-testid={`watchlist-item-${item.id}`}
-    >
-      <div className="watchlog-card__top">
-        <h2>
-          <Link
-            to={`/items/${item.id}`}
-            state={{ filterQuery }}
-            className="watchlog-card__title-link"
+    <>
+      <article
+        className={cn(
+          watchlistCardVariants({ status: item.status, selected: isSelected })
+        )}
+        data-testid={`watchlist-item-${item.id}`}
+      >
+        <div className="mb-2">
+          <h2 className="text-lg font-semibold leading-tight">
+            <Link
+              to={`/items/${item.id}`}
+              state={{ filterQuery }}
+              className="text-foreground hover:text-primary hover:underline"
+            >
+              {item.title}
+            </Link>
+          </h2>
+        </div>
+
+        <div className="mb-3 flex flex-wrap gap-2">
+          <Badge variant={item.type === 'movie' ? 'movie' : 'book'}>
+            {item.type === 'movie' ? 'Movie' : 'Book'}
+          </Badge>
+          <Badge variant="genre">{item.genre}</Badge>
+          <Badge variant={item.status}>{item.status}</Badge>
+        </div>
+
+        {item.status === 'done' && hasRating(item) && (
+          <p className="mb-3 text-sm text-muted-foreground">
+            ★ {item.rating} / 5
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" size="sm" asChild>
+            <Link to={`/items/${item.id}`} state={{ filterQuery }}>
+              View
+            </Link>
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            onClick={() => setRemoveOpen(true)}
           >
-            {item.title}
-          </Link>
-        </h2>
-      </div>
-      <div className="watchlog-card__meta">
-        <span
-          className={
-            item.type === 'movie'
-              ? 'watchlog-badge watchlog-badge--movie'
-              : 'watchlog-badge watchlog-badge--book'
-          }
-        >
-          {item.type === 'movie' ? 'Movie' : 'Book'}
-        </span>
-        <span className="watchlog-badge watchlog-badge--genre">{item.genre}</span>
-        <span className={`watchlog-badge watchlog-badge--${item.status}`}>
-          {item.status}
-        </span>
-      </div>
-      {item.status === 'done' && hasRating(item) && (
-        <p className="watchlog-card__rating">★ {item.rating} / 5</p>
-      )}
-      <div className="watchlog-card-actions">
-        <Link
-          to={`/items/${item.id}`}
-          state={{ filterQuery }}
-          className="watchlog-btn watchlog-btn--secondary watchlog-btn--sm"
-        >
-          View
-        </Link>
-        <button
-          type="button"
-          className="watchlog-btn watchlog-btn--danger watchlog-btn--sm"
-          onClick={() => onRemove(item.id)}
-        >
-          Remove
-        </button>
-      </div>
-    </article>
+            Remove
+          </Button>
+        </div>
+      </article>
+
+      <RemoveItemDialog
+        open={removeOpen}
+        onOpenChange={setRemoveOpen}
+        itemTitle={item.title}
+        onConfirm={() => onRemove(item.id)}
+      />
+    </>
   );
 }

@@ -1,6 +1,6 @@
-# WatchLog — Stage 3 complete
+# WatchLog — Stage 4 complete
 
-Personal movie and book watchlist. Stage 1 is a TypeScript library; Stage 2 added React UI; Stage 3 adds React Router v6 multi-page navigation.
+Personal movie and book watchlist. Stage 1 is a TypeScript library; Stage 2 added React UI; Stage 3 added React Router; Stage 4 restyles the app with Tailwind CSS, Radix UI, and CVA component variants.
 
 ## Prerequisites
 
@@ -30,6 +30,16 @@ Get a free TMDB key: https://www.themoviedb.org/settings/api
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run build` | Compile Stage 1 library (`src/` → `dist/`) |
 | `npm run build:app` | Production React bundle (`src/` → `build/`) |
+
+## Stage 4 features
+
+- **Tailwind CSS** — utility-first styling with design tokens (color, spacing, radius) via CSS variables
+- **PostCSS pipeline** — `postcss.config.js` + `tailwind.config.js`
+- **`cn()` helper** — `clsx` + `tailwind-merge` for safe class merging (shadcn pattern)
+- **CVA variants** — watchlist card borders/colors vary by status (`want`, `watching`, `done`)
+- **Radix UI** — accessible Select, RadioGroup, Tabs, and Dialog primitives
+- **Dark mode** — class-based theme toggle (`src/lib/theme.ts`), applied before first paint, preference persisted
+- **Remove confirmation** — Radix Dialog with focus trap, Escape to close, focus return
 
 ## Stage 3 features
 
@@ -65,16 +75,16 @@ WatchLog/
     ├── pages/              WatchlistPage, ItemDetailPage, ItemEditPage, LoginPage
     ├── fixtures/seedWatchlist.ts   Starting watchlist data
     ├── utils/searchMappers.ts      Search hit → watchlist item
-    ├── components/         SearchPanel, cards, AppLayout, ProtectedRoute
+    ├── components/         SearchPanel, cards, AppLayout, ThemeToggle, ui/
     ├── hooks/              useMediaSearch, useWatchlistFilters
     ├── context/            WatchlistDataContext, AuthContext
     ├── constants/          Min search length, etc.
-    ├── lib/                Stage 1 public barrel export
+    ├── lib/                Stage 1 public barrel export + app helpers (cn, theme)
     ├── types/              WatchlistItem data model
     ├── utils/              filter, sort, group, stats (Stage 1)
     ├── api/                Open Library + TMDB clients
     ├── fixtures/           Shared mock data for tests
-    ├── styles/             stage2-layout.css
+    ├── styles/globals.css  Tailwind + design tokens
     └── config.ts           Environment variables (single source)
 ```
 

@@ -4,8 +4,11 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { warnIfMovieSearchUnavailable } from './config.js';
-import './styles/stage2-layout.css';
+import { applyTheme, resolveInitialTheme } from './lib/theme';
+import './styles/globals.css';
 
+// Runs before the first paint so the page never flashes the wrong theme.
+applyTheme(resolveInitialTheme());
 warnIfMovieSearchUnavailable();
 
 const container = document.getElementById('root');

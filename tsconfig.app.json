@@ -26,6 +26,8 @@
     "src/constants/**/*",
     "src/bootstrap.tsx",
     "src/index.tsx",
+    "src/lib/**/*",
+    "src/config.ts",
     "src/vite-env.d.ts"
   ]
 }

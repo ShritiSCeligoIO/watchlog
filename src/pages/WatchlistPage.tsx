@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SearchPanel from '../components/SearchPanel';
 import WatchlistItemCard from '../components/WatchlistItemCard';
@@ -12,7 +13,14 @@ import {
   movieSearchResultToWatchlistItem,
 } from '../utils/searchMappers.js';
 import { filterWatchlistItems } from '../utils/filterWatchlistItems.js';
-import { useState } from 'react';
+import { Label } from '../components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 
 export default function WatchlistPage() {
   const { items, addItem, removeItem } = useWatchlistData();
@@ -40,50 +48,55 @@ export default function WatchlistPage() {
         onAddMovie={handleAddMovieFromSearch}
       />
 
-      <div className="watchlog-panel watchlog-filters">
-        <h2 className="watchlog-section-title">Filters</h2>
-        <div className="watchlog-form">
-          <label className="watchlog-filter-field">
-            Type
-            <select
-              aria-label="Filter list by type"
+      <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm sm:p-6">
+        <h2 className="mb-4 text-lg font-semibold">Filters</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="type-filter">Type</Label>
+            <Select
               value={typeFilter}
-              onChange={(event) =>
-                setTypeFilter(event.target.value as TypeFilter)
-              }
+              onValueChange={(value) => setTypeFilter(value as TypeFilter)}
             >
-              <option value="all">All types</option>
-              <option value="movie">Movies</option>
-              <option value="book">Books</option>
-            </select>
-          </label>
-          <label className="watchlog-filter-field">
-            Status
-            <select
-              aria-label="Filter list by status"
+              <SelectTrigger id="type-filter" aria-label="Filter list by type">
+                <SelectValue placeholder="All types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                <SelectItem value="movie">Movies</SelectItem>
+                <SelectItem value="book">Books</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="status-filter">Status</Label>
+            <Select
               value={statusFilter}
-              onChange={(event) =>
-                setStatusFilter(event.target.value as StatusFilter)
-              }
+              onValueChange={(value) => setStatusFilter(value as StatusFilter)}
             >
-              <option value="all">All statuses</option>
-              <option value="want">Want</option>
-              <option value="watching">Watching / Reading</option>
-              <option value="done">Done</option>
-            </select>
-          </label>
+              <SelectTrigger id="status-filter" aria-label="Filter list by status">
+                <SelectValue placeholder="All statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="want">Want</SelectItem>
+                <SelectItem value="watching">Watching / Reading</SelectItem>
+                <SelectItem value="done">Done</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
-      <h2 className="watchlog-list-heading">
+      <h2 className="mb-4 text-xl font-semibold">
         Your watchlist ({filteredItems.length}
         {filteredItems.length !== items.length ? ` of ${items.length}` : ''})
       </h2>
 
       {filteredItems.length === 0 ? (
-        <p className="watchlog-hint">No items match the current filters.</p>
+        <p className="text-sm text-muted-foreground">No items match the current filters.</p>
       ) : (
-        <div className="watchlog-card-list">
+        <div className="grid gap-4 sm:grid-cols-2">
           {filteredItems.map((item) => (
             <WatchlistItemCard
               key={item.id}
@@ -96,9 +109,12 @@ export default function WatchlistPage() {
       )}
 
       {filterQuery && (
-        <p className="watchlog-hint">
+        <p className="mt-4 text-sm text-muted-foreground">
           Share this view:{' '}
-          <Link to={{ pathname: '/watchlist', search: filterQuery }}>
+          <Link
+            to={{ pathname: '/watchlist', search: filterQuery }}
+            className="font-medium text-primary hover:underline"
+          >
             /watchlist?{filterQuery}
           </Link>
         </p>

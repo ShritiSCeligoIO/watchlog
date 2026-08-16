@@ -25,9 +25,11 @@ export default class ErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <main className="watchlog-app">
-          <h1>WatchLog</h1>
-          <p>Something went wrong. Refresh the page to try again.</p>
+        <main className="mx-auto max-w-4xl px-4 py-6">
+          <h1 className="text-3xl font-bold">WatchLog</h1>
+          <p className="mt-2 text-muted-foreground">
+            Something went wrong. Refresh the page to try again.
+          </p>
         </main>
       );
     }

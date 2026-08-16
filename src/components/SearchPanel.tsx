@@ -9,6 +9,9 @@ import {
   watchlistIdForBookSearch,
   watchlistIdForMovieSearch,
 } from '../utils/searchMappers.js';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface SearchPanelProps {
   items: WatchlistItem[];
@@ -39,54 +42,78 @@ export default function SearchPanel({
     results.length === 0;
 
   return (
-    <section aria-label="Search" className="watchlog-panel watchlog-panel--search">
-      <h2 className="watchlog-section-title">Search</h2>
-      <div className="watchlog-form">
-        <select
-          value={mediaType}
-          aria-label="Search media type"
-          onChange={(event) =>
-            onMediaTypeChange(event.target.value as SearchMediaType)
-          }
-        >
-          <option value="book">Books</option>
-          <option value="movie">Movies</option>
-        </select>
-        <input
-          type="search"
-          name="searchQuery"
-          value={query}
-          placeholder={
-            mediaType === 'book' ? 'Search books by title…' : 'Search movies by title…'
-          }
-          onChange={(event) => setQuery(event.target.value)}
-        />
-      </div>
+    <section
+      aria-label="Search"
+      className="mb-6 rounded-xl border bg-card p-4 shadow-sm sm:p-6"
+    >
+      <h2 className="mb-4 text-lg font-semibold">Search</h2>
+
+      <Tabs
+        value={mediaType}
+        onValueChange={(value) => onMediaTypeChange(value as SearchMediaType)}
+      >
+        <TabsList aria-label="Search media type">
+          <TabsTrigger value="book">Books</TabsTrigger>
+          <TabsTrigger value="movie">Movies</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="book">
+          <Input
+            type="search"
+            name="searchQuery"
+            value={query}
+            placeholder="Search books by title…"
+            aria-label="Search books"
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </TabsContent>
+
+        <TabsContent value="movie">
+          <Input
+            type="search"
+            name="searchQuery"
+            value={query}
+            placeholder="Search movies by title…"
+            aria-label="Search movies"
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </TabsContent>
+      </Tabs>
+
       {movieSearchUnavailable && (
-        <p className="watchlog-error">
+        <p className="mt-3 text-sm text-destructive" role="alert">
           Movie search needs TMDB_API_KEY in .env at the repo root. Restart{' '}
-          <code>npm run dev</code> after adding it.
+          <code className="rounded bg-muted px-1 py-0.5 text-xs">npm run dev</code>{' '}
+          after adding it.
         </p>
       )}
-      {query.trim().length > 0 &&
-        query.trim().length < MIN_SEARCH_QUERY_LENGTH && (
-          <p className="watchlog-hint">
-            Type at least {MIN_SEARCH_QUERY_LENGTH} characters to search.
-          </p>
-        )}
+
+      {query.trim().length > 0 && query.trim().length < MIN_SEARCH_QUERY_LENGTH && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          Type at least {MIN_SEARCH_QUERY_LENGTH} characters to search.
+        </p>
+      )}
+
       {showNoResults && (
-        <p className="watchlog-hint">
+        <p className="mt-3 text-sm text-muted-foreground">
           No results found for &quot;{trimmedQuery}&quot;.
         </p>
       )}
+
       {!movieSearchUnavailable && loading && (
-        <p className="watchlog-status">Searching…</p>
+        <p className="mt-3 text-sm text-muted-foreground" aria-live="polite">
+          Searching…
+        </p>
       )}
+
       {!movieSearchUnavailable && error && (
-        <p className="watchlog-error">{error}</p>
+        <p className="mt-3 text-sm text-destructive" role="alert">
+          {error}
+        </p>
       )}
+
       {!movieSearchUnavailable && !loading && !error && results.length > 0 && (
-        <ul className="watchlog-search-results">
+        <ul className="mt-4 space-y-2">
           {results.map((result) => {
             const watchlistId =
               mediaType === 'book'
@@ -95,14 +122,17 @@ export default function SearchPanel({
             const alreadyAdded = watchlistIds.has(watchlistId);
 
             return (
-              <li key={`${mediaType}-${result.id}`} className="watchlog-search-hit">
-                <span>{result.title}</span>
+              <li
+                key={`${mediaType}-${result.id}`}
+                className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background px-3 py-2"
+              >
+                <span className="text-sm font-medium">{result.title}</span>
                 {alreadyAdded ? (
-                  <span className="watchlog-hint">Added</span>
+                  <span className="text-xs text-muted-foreground">Added</span>
                 ) : (
-                  <button
+                  <Button
                     type="button"
-                    className="watchlog-btn watchlog-btn--primary watchlog-btn--sm"
+                    size="sm"
                     onClick={() =>
                       mediaType === 'book'
                         ? onAddBook(result as BookSearchResult)
@@ -110,7 +140,7 @@ export default function SearchPanel({
                     }
                   >
                     Add
-                  </button>
+                  </Button>
                 )}
               </li>
             );
