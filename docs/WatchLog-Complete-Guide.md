@@ -13,7 +13,7 @@ Scope: **Everything implemented through Stage 4** (not Stage 5+)
 
 ### Elevator pitch (30 seconds)
 
-> WatchLog is a movie/book watchlist in four layers: **Stage 1** typed library (types, utils, API clients), **Stage 2** React UI (components, search hook, context), **Stage 3** React Router (pages, URL filters, protected edit), **Stage 4** design system (Tailwind tokens, Radix primitives, CVA variants, dark mode). Data is in-memory from seed — no persistence yet. **100 unit tests** on library and pure UI logic; CI runs test + build + type-check.
+> WatchLog is a movie/book watchlist in four layers: **Stage 1** typed library (types, utils, API clients), **Stage 2** React UI (components, search hook, context), **Stage 3** React Router (pages, URL filters, protected edit), **Stage 4** design system (Tailwind tokens, Radix primitives, CVA variants, dark mode). Data is in-memory from seed — no persistence yet. **79 unit tests** on Stage 1 logic; CI runs test + build + type-check.
 
 ### Routes (memorize)
 
@@ -56,7 +56,7 @@ Scope: **Everything implemented through Stage 4** (not Stage 5+)
 5. Edit → redirected to `/login` → sign in → edit → save  
 6. Remove an item → Radix confirm dialog (Escape closes, focus returns)  
 7. Toggle dark mode → refresh → theme persists  
-8. (Optional) `npm test` → 100 passed  
+8. (Optional) `npm test` → 79 passed  
 
 ### Top 10 reviewer questions → one-line answers
 
@@ -69,7 +69,7 @@ Scope: **Everything implemented through Stage 4** (not Stage 5+)
 | Why two tsconfigs? | Library (`dist/`) vs React app (JSX/DOM) |
 | Why bootstrap vs index? | Tiny entry file — integrator-ui pattern |
 | Where are env vars read? | Only `config.ts` |
-| Why no component tests? | Stages 2–4 focus on patterns; pure logic has 100 unit tests |
+| Why no component tests? | Stages 2–4 focus on patterns; Stage 1 has 79 unit tests |
 | How do URL filters work? | `useWatchlistFilters` reads/writes `useSearchParams` |
 | What does ErrorBoundary catch? | Render errors only — not clicks or fetch |
 | Why Radix instead of hand-rolled? | Free accessibility: focus trap, keyboard nav, ARIA wiring |
@@ -116,7 +116,7 @@ Say this out loud while clicking through the app (`npm run dev`).
 | 7 | Edit status to Done, set rating, save | "Update logic in WatchlistDataContext enforces rating only on done items." |
 | 9 | Click **Remove** on a card | "Removal goes through a Radix Dialog — focus is trapped, Escape cancels, and focus returns to the trigger. I get that behaviour from the primitive instead of writing it myself." |
 | 10 | Toggle dark mode, then refresh | "Theme is a class on `<html>` driven by CSS variables. The choice is persisted, and `bootstrap.tsx` applies it before the first paint so there's no flash of the wrong theme." |
-| 11 | Run `npm test` (optional) | "100 unit tests — pure functions, API clients, and the Stage 4 helpers (`cn`, theme resolution, card variants). No React component tests; the assignment stages focus on patterns." |
+| 11 | Run `npm test` (optional) | "79 unit tests — Stage 1 pure functions and API clients. Stages 2–4 focus on React and styling patterns, which the assignment does not ask me to unit test." |
 
 **One sentence pitch:** "Stage 1 is a typed library; Stage 2 adds React UI and search; Stage 3 adds React Router with URL filters, deep links, and an auth guard on edit; Stage 4 replaces hand-written CSS with a Tailwind design-token system, Radix primitives for accessible behaviour, and CVA for component variants."
 
@@ -773,7 +773,6 @@ Pure functions: same input → same output, no side effects. Used by UI and test
 | **Purpose** | `cn()` — merge class names safely |
 | **Stage** | 4 |
 | **Built on** | `clsx` (conditional class joining) + `tailwind-merge` (conflict resolution) |
-| **Tested by** | `src/lib/utils.test.ts` |
 | **Tell reviewer** | "Plain string concatenation breaks overrides — `'px-2' + ' px-4'` leaves both classes and the winner depends on CSS order. `cn()` resolves conflicts so the last utility wins predictably." |
 
 ### `src/lib/theme.ts`
@@ -782,8 +781,7 @@ Pure functions: same input → same output, no side effects. Used by UI and test
 |--|--|
 | **Purpose** | Single source of truth for light/dark theme |
 | **Stage** | 4 |
-| **Key exports** | `resolveInitialTheme`, `readStoredTheme`, `applyTheme`, `persistTheme`, `THEME_STORAGE_KEY` |
-| **Tested by** | `src/lib/theme.test.ts` |
+| **Key exports** | `Theme`, `resolveInitialTheme`, `applyTheme`, `persistTheme` |
 | **Tell reviewer** | "Both `bootstrap.tsx` and `ThemeToggle` need theme logic, so it lives in one module — the storage key is not duplicated. Reading and writing are separate functions, so an explicit user choice wins but we still follow the OS setting until one is made." |
 
 ### `src/components/ui/` — Radix wrappers
@@ -810,8 +808,7 @@ Pure functions: same input → same output, no side effects. Used by UI and test
 | **Purpose** | CVA definition for the watchlist card |
 | **Stage** | 4 |
 | **Variants** | `status` (`want` / `watching` / `done` accent border), `selected` (focus ring) |
-| **Tested by** | `src/components/watchlistCardVariants.test.ts` |
-| **Tell reviewer** | "Extracted from the card component so the status → style mapping is declarative and unit-testable without rendering React." |
+| **Tell reviewer** | "Extracted from the card component so the status → style mapping lives in one declarative place instead of nested ternaries in JSX." |
 
 ### `src/components/ThemeToggle.tsx`
 
@@ -962,7 +959,7 @@ User saves
 |----------|--------|
 | Why no persistence? | Out of scope through Stage 4. Watchlist data lives in React state seeded from `seedWatchlist`. Only the theme choice is persisted. |
 | Is auth real? | No — sessionStorage flag for demonstrating ProtectedRoute only. |
-| Why 100 tests, not component tests? | The assignment stages focus on UI patterns; the library, API clients, and pure Stage 4 helpers are fully unit tested. Rendering tests would need jsdom and Testing Library, which is a later stage. |
+| Why 79 tests, not component tests? | Stage 1 is the stage with a testing requirement, and its utilities and API clients are fully covered. Stages 2–4 are React and styling patterns; rendering tests would need jsdom and Testing Library, which is a later stage. |
 | Why two TypeScript configs? | Library (Node emit to dist/) vs React app (JSX, DOM) have different compilation needs. |
 | Does the Tailwind helper end up in the published library? | No. `tsconfig.lib.json` includes `src/lib/index.ts` only, so `lib/utils.ts` and `lib/theme.ts` are app-only and never emitted to `dist/`. |
 | Why bootstrap separate from index? | Integrator-ui pattern — tiny entry enables lazy loading later. |
@@ -982,8 +979,8 @@ User saves
 
 | Metric | Value |
 |--------|-------|
-| Test files | 13 |
-| Tests | 100 |
+| Test files | 10 |
+| Tests | 79 |
 | Runner | Vitest |
 | Environment | Node (not jsdom) |
 
@@ -1001,11 +998,8 @@ User saves
 | `utils/searchMappers.test.ts` | Search → item mapping |
 | `api/openLibraryClient.test.ts` | Book API client |
 | `api/tmdbClient.test.ts` | Movie API client |
-| `lib/utils.test.ts` | `cn()` class merging and conflict resolution |
-| `lib/theme.test.ts` | Stored vs system theme precedence, apply, persist |
-| `components/watchlistCardVariants.test.ts` | Status and selected card variants |
 
-The Stage 4 tests run in the same Node environment as the rest: `cn()` and the CVA variants are pure string functions, and the theme tests stub `window` and `document` with `vi.stubGlobal`. No browser environment is required.
+Stage 4 added no tests. Its helpers (`cn`, the theme module, the CVA variants) are pure enough to unit test in this same Node environment, so that is available as a follow-up if a later stage asks for it.
 
 ## Commands
 
@@ -1013,7 +1007,7 @@ The Stage 4 tests run in the same Node environment as the rest: `cn()` and the C
 npm install
 cp .env.example .env    # optional TMDB key
 npm run dev             # http://localhost:5173 (typical Vite port)
-npm test                # 100 tests
+npm test                # 79 tests
 npm run build           # Stage 1 → dist/
 npm run build:app       # React → build/
 npx tsc -b              # full type-check (also in CI)
