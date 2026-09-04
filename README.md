@@ -59,6 +59,11 @@ node --input-type=module -e "
 
 When you add a React app entry point, call `validateMovieSearchConfig()` from `config.ts` at startup if the app uses movie search — it fails fast when `TMDB_API_KEY` is missing.
 
+## What this stage explains
+
+See [STAGE-1.md](./STAGE-1.md) for a plain-language walkthrough of every concept
+this stage introduces.
+
 ## Repository
 
 https://github.com/ShritiSCeligoIO/watchlog
