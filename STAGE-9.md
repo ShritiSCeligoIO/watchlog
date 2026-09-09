@@ -16,7 +16,7 @@ React Testing Library renders the UI.
 MSW 2 intercepts real Fetch API requests.
 Istanbul coverage enforces four global 80% gates.
 
-The suite contains 26 files and 70 tests.
+The suite contains 28 files and 77 tests.
 That is intentionally smaller than the original Stage 9 suite.
 Each layer has a distinct job instead of repeating the same assertion.
 
@@ -202,10 +202,10 @@ npm run test:coverage -- --runInBand
 
 Measured result:
 
-- Statements: 92.67%
-- Branches: 80.04%
-- Functions: 92.51%
-- Lines: 92.16%
+- Statements: 95.02%
+- Branches: 85.09%
+- Functions: 94.88%
+- Lines: 94.67%
 
 All four global thresholds are 80%.
 Dropping below any one makes the command exit non-zero.
