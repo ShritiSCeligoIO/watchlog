@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mockWatchlist } from '../fixtures/mockWatchlist.js';
+import { applyWatchlistUpdate } from '../utils/applyWatchlistUpdate.js';
 import {
   applyWatchlistItemUpdate,
   hasRating,
@@ -27,17 +28,23 @@ describe('watchlist item type guards', () => {
   });
 });
 
-describe('applyWatchlistItemUpdate', () => {
+describe('applyWatchlistUpdate', () => {
   const ratedMovie = mockWatchlist[0]!;
 
   it('sets a rating on a done item', () => {
     expect(
-      applyWatchlistItemUpdate(ratedMovie, { status: 'done', rating: 3 }).rating
+      applyWatchlistUpdate(ratedMovie, { status: 'done', rating: 3 }).rating
+    ).toBe(3);
+    expect(
+      applyWatchlistItemUpdate(ratedMovie, {
+        status: 'done',
+        rating: 3,
+      }).rating
     ).toBe(3);
   });
 
   it('clears a rating when status is no longer done', () => {
-    const updated = applyWatchlistItemUpdate(ratedMovie, {
+    const updated = applyWatchlistUpdate(ratedMovie, {
       status: 'watching',
     });
 
@@ -45,7 +52,7 @@ describe('applyWatchlistItemUpdate', () => {
   });
 
   it('clears a rating when the form supplies null', () => {
-    const updated = applyWatchlistItemUpdate(ratedMovie, {
+    const updated = applyWatchlistUpdate(ratedMovie, {
       status: 'done',
       rating: null,
     });

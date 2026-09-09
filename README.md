@@ -1,48 +1,58 @@
-# WatchLog — Stage 5
+# WatchLog — Stage 6
 
-WatchLog is a beginner React 19 app for tracking movies and books. Stage 5
-keeps the Stage 4 UI and routing while moving shared state to Redux Toolkit.
-Redux Saga handles search and mock-auth side effects.
+WatchLog is a beginner React 19 app for tracking movies and books. Stage 6
+keeps the existing UI and routes while replacing Redux with:
 
-## Requirements
-
-- Node.js 22.11.0
-- npm
-- A TMDB API key only for movie search
+- Zustand for state owned by this browser tab
+- TanStack Query for data copied from an API
+- URL search parameters for shareable filters
 
 ## Setup
+
+Use Node.js 22.11.0 and npm.
 
 ```bash
 npm install
 cp .env.example .env
+npm run dev
 ```
 
-Add a [TMDB API key](https://www.themoviedb.org/settings/api) to `.env` if you
-want movie search. Book search works without a key.
+Book search works without configuration. Movie search needs a TMDB API key:
+
+```text
+TMDB_API_KEY=your_key
+```
+
+All environment variables are read in `src/config.ts` and declared in
+`env.yaml`.
 
 ## Commands
 
 ```bash
 npm test
-npx tsc -p tsconfig.app.json
+npx tsc -p tsconfig.app.json --noEmit
 npm run build:lib
 npm run build:app
 npm run dev
 ```
 
-The app opens at the URL printed by Vite. `build:lib` creates the reusable
-library in `dist/`; `build:app` creates the browser app in `build/`.
+## Stage 6 structure
 
-## What Stage 5 adds
+```text
+src/
+├── stores/             UI-owned state and mock auth
+├── queries/            Query client and cache keys
+├── features/search/    Debounced remote search query
+├── features/watchlist/ Mock backend, queries, and mutations
+├── hooks/              URL filters and debounce helper
+└── utils/              Shared watchlist business rules
+```
 
-- Feature-organized auth, search, and watchlist slices
-- A configured store, typed hooks, root reducer, and root saga
-- Debounced, cancellable search with selective transient retries
-- Pure watchlist reducers for adding, removing, and editing items
-- Reselect selectors for URL-filtered items and statistics
-- Redux DevTools support
+The mock watchlist is asynchronous but not durable. It resets from
+`seedWatchlist` after a reload.
 
-Watchlist changes remain in memory. Filters intentionally remain in the URL so
-filtered views survive refreshes and can be shared.
+Try **Simulate server failure**, then remove an item. The card disappears
+optimistically, returns when the write fails, and an error appears.
 
-See [STAGE-5.md](./STAGE-5.md) for the mental model and guided data flow.
+See [STAGE-6.md](./STAGE-6.md) for the guided explanation and
+[docs/state-split.md](./docs/state-split.md) for the field ownership map.

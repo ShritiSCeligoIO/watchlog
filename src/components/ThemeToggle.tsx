@@ -1,24 +1,9 @@
-import { useEffect, useState } from 'react';
-import {
-  applyTheme,
-  persistTheme,
-  resolveInitialTheme,
-  type Theme,
-} from '../lib/theme';
+import { useUiStore } from '../stores/uiStore';
 import { Button } from './ui/button';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(resolveInitialTheme);
-
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
-
-  function toggleTheme() {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    persistTheme(next);
-  }
+  const theme = useUiStore((state) => state.theme);
+  const toggleTheme = useUiStore((state) => state.toggleTheme);
 
   return (
     <Button

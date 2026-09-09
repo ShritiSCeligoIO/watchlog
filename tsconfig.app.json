@@ -16,16 +16,20 @@
   },
   "include": [
     "src/App.tsx",
+    "src/pages/**/*",
     "src/fixtures/seedWatchlist.ts",
     "src/utils/searchMappers.ts",
     "src/utils/filterWatchlistItems.ts",
     "src/components/**/*",
-    "src/pages/**/*",
     "src/hooks/**/*",
-    "src/features/**/*",
-    "src/store/**/*",
     "src/constants/**/*",
+    "src/bootstrap.tsx",
     "src/index.tsx",
+    "src/lib/**/*",
+    "src/stores/**/*",
+    "src/queries/**/*",
+    "src/features/**/*",
+    "src/config.ts",
     "src/vite-env.d.ts"
   ]
 }

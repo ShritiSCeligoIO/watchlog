@@ -7,3 +7,4 @@ export {
   bookSearchResultToWatchlistItem,
   movieSearchResultToWatchlistItem,
 } from './searchMappers.js';
+export { applyWatchlistUpdate } from './applyWatchlistUpdate.js';

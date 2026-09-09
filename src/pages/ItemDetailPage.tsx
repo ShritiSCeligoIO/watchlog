@@ -1,125 +1,202 @@
-import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { toErrorMessage } from '../api/isRetryableError.js';
 import RemoveItemDialog from '../components/RemoveItemDialog';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { selectItemById } from '../features/watchlist/watchlistSelectors';
-import { removeItem } from '../features/watchlist/watchlistSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  useRemoveWatchlistItem,
+  useWatchlistItem,
+} from '../features/watchlist/watchlistQueries';
+import { useUiStore } from '../stores/uiStore';
 import { hasRating, isBookItem, isMovieItem } from '../types/watchlistItem.js';
 
-/** Read itemId from the URL instead of keeping a selected item in Context. */
 export default function ItemDetailPage() {
   const { itemId } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const item = useAppSelector((state) => selectItemById(state, itemId));
-  const [removeOpen, setRemoveOpen] = useState(false);
+  const location = useLocation();
 
-  // Router state is external input, so accept only the string field we expect.
-  const filterQuery =
+  const { data: item, isPending, isError, error } = useWatchlistItem(itemId);
+
+  const pendingRemoval = useUiStore((state) => state.pendingRemoval);
+  const requestRemoval = useUiStore((state) => state.requestRemoval);
+  const cancelRemoval = useUiStore((state) => state.cancelRemoval);
+  const removeItem = useRemoveWatchlistItem();
+
+  const backSearch =
     typeof location.state === 'object' &&
     location.state !== null &&
     'filterQuery' in location.state &&
     typeof location.state.filterQuery === 'string'
       ? location.state.filterQuery
       : '';
-  const watchlistDestination = filterQuery
-    ? { pathname: '/watchlist', search: filterQuery }
+
+  const backTo = backSearch
+    ? { pathname: '/watchlist', search: backSearch }
     : '/watchlist';
 
+  // Optimistic removal briefly makes the selected item absent from the cache.
   if (!item) {
+    if (isPending || removeItem.isPending) {
+      return (
+        <section
+          aria-label="Item details"
+          className="rounded-xl border bg-card p-6 shadow-sm"
+        >
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            {removeItem.isPending ? 'Removing…' : 'Loading item…'}
+          </p>
+        </section>
+      );
+    }
+
     return (
-      <section className="rounded-xl border bg-card p-6 shadow-sm" aria-label="Item details">
-        <h2 className="text-xl font-semibold">Item not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">No watchlist item matches this URL.</p>
+      <section
+        aria-label="Item details"
+        className="rounded-xl border bg-card p-6 shadow-sm"
+      >
+        <h2 className="text-xl font-semibold">
+          {isError ? 'Could not load this item' : 'Item not found'}
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {isError ? (
+            toErrorMessage(error, 'Please try again.')
+          ) : (
+            <>
+              No watchlist item matches{' '}
+              <code className="rounded bg-muted px-1">{itemId}</code>.
+            </>
+          )}
+        </p>
         <Button variant="secondary" className="mt-4" asChild>
-          <Link to={watchlistDestination}>Back to watchlist</Link>
+          <Link to={backTo}>Back to watchlist</Link>
         </Button>
       </section>
     );
   }
 
-  const currentItemId = item.id;
+  const watchlistItem = item;
 
-  function handleRemove() {
-    dispatch(removeItem(currentItemId));
-    navigate(watchlistDestination);
+  function handleConfirmRemove() {
+    // Navigating only once the write succeeds keeps the failure visible here
+    // instead of on a page this component has already left.
+    removeItem.mutate(watchlistItem.id, {
+      onSuccess: () => navigate(backTo),
+    });
   }
 
   return (
     <>
-    <section className="rounded-xl border bg-card p-4 shadow-sm sm:p-6" aria-label="Item details">
-      <h2 className="text-2xl font-bold">{item.title}</h2>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <Badge variant={item.type}>
-          {item.type === 'movie' ? 'Movie' : 'Book'}
-        </Badge>
-        <Badge variant={item.status}>{item.status}</Badge>
-      </div>
+      <section
+        aria-label="Item details"
+        className="rounded-xl border bg-card p-4 shadow-sm sm:p-6"
+      >
+        <h2 className="text-2xl font-bold">{watchlistItem.title}</h2>
 
-      <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Genre</dt>
-          <dd className="mt-1 text-sm">{item.genre}</dd>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Badge variant={watchlistItem.type === 'movie' ? 'movie' : 'book'}>
+            {watchlistItem.type === 'movie' ? 'Movie' : 'Book'}
+          </Badge>
+          <Badge variant={watchlistItem.status}>{watchlistItem.status}</Badge>
         </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Added</dt>
-          <dd className="mt-1 text-sm">{item.dateAdded}</dd>
-        </div>
-        {item.status === 'done' && hasRating(item) && (
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Rating</dt>
-            <dd className="mt-1 text-sm">★ {item.rating} / 5</dd>
-          </div>
-        )}
-        {isMovieItem(item) && item.director && (
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Director</dt>
-            <dd className="mt-1 text-sm">{item.director}</dd>
-          </div>
-        )}
-        {isMovieItem(item) && item.releaseYear && (
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Year</dt>
-            <dd className="mt-1 text-sm">{item.releaseYear}</dd>
-          </div>
-        )}
-        {isBookItem(item) && item.author && (
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Author</dt>
-            <dd className="mt-1 text-sm">{item.author}</dd>
-          </div>
-        )}
-        {isBookItem(item) && item.publishYear && (
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Published</dt>
-            <dd className="mt-1 text-sm">{item.publishYear}</dd>
-          </div>
-        )}
-      </dl>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Button asChild>
-          <Link to={`/items/${item.id}/edit`} state={{ filterQuery }}>Edit</Link>
-        </Button>
-        <RemoveItemDialog
-          open={removeOpen}
-          onOpenChange={setRemoveOpen}
-          itemTitle={item.title}
-          onConfirm={handleRemove}
-          trigger={
-            <Button type="button" variant="destructive">
-              Remove
-            </Button>
+        <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Genre
+            </dt>
+            <dd className="mt-1 text-sm">{watchlistItem.genre}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Added
+            </dt>
+            <dd className="mt-1 text-sm">{watchlistItem.dateAdded}</dd>
+          </div>
+          {watchlistItem.status === 'done' && hasRating(watchlistItem) && (
+            <div>
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Rating
+              </dt>
+              <dd className="mt-1 text-sm">★ {watchlistItem.rating} / 5</dd>
+            </div>
+          )}
+          {isMovieItem(watchlistItem) && watchlistItem.director && (
+            <div>
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Director
+              </dt>
+              <dd className="mt-1 text-sm">{watchlistItem.director}</dd>
+            </div>
+          )}
+          {isMovieItem(watchlistItem) && watchlistItem.releaseYear && (
+            <div>
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Year
+              </dt>
+              <dd className="mt-1 text-sm">{watchlistItem.releaseYear}</dd>
+            </div>
+          )}
+          {isBookItem(watchlistItem) && watchlistItem.author && (
+            <div>
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Author
+              </dt>
+              <dd className="mt-1 text-sm">{watchlistItem.author}</dd>
+            </div>
+          )}
+          {isBookItem(watchlistItem) && watchlistItem.publishYear && (
+            <div>
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Published
+              </dt>
+              <dd className="mt-1 text-sm">{watchlistItem.publishYear}</dd>
+            </div>
+          )}
+        </dl>
+
+        {removeItem.isError && (
+          <p className="mt-6 text-sm text-destructive" role="alert">
+            {toErrorMessage(removeItem.error, 'Could not remove that item.')}
+          </p>
+        )}
+
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Button asChild>
+            <Link
+              to={`/items/${watchlistItem.id}/edit`}
+              state={{ filterQuery: backSearch }}
+            >
+              Edit
+            </Link>
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() =>
+              requestRemoval({
+                id: watchlistItem.id,
+                title: watchlistItem.title,
+              })
+            }
+          >
+            Remove
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link to={backTo}>Back to watchlist</Link>
+          </Button>
+        </div>
+      </section>
+
+      <RemoveItemDialog
+        open={pendingRemoval !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            cancelRemoval();
           }
-        />
-        <Button variant="secondary" asChild>
-          <Link to={watchlistDestination}>Back to watchlist</Link>
-        </Button>
-      </div>
-    </section>
+        }}
+        itemTitle={pendingRemoval?.title ?? ''}
+        onConfirm={handleConfirmRemove}
+      />
     </>
   );
 }

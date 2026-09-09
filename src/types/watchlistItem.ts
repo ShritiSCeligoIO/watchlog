@@ -1,3 +1,5 @@
+import { applyWatchlistUpdate } from '../utils/applyWatchlistUpdate.js';
+
 export type WatchStatus = 'want' | 'watching' | 'done';
 
 export type StarRating = 1 | 2 | 3 | 4 | 5;
@@ -56,18 +58,5 @@ export function hasRating(
   return item.rating !== undefined;
 }
 
-/** Apply edit-form changes while enforcing rating rules. */
-export function applyWatchlistItemUpdate(
-  item: WatchlistItem,
-  update: WatchlistItemUpdate
-): WatchlistItem {
-  const { rating, ...otherChanges } = update;
-  const updatedItem = { ...item, ...otherChanges };
-
-  if (updatedItem.status !== 'done' || rating === null) {
-    const { rating: _oldRating, ...itemWithoutRating } = updatedItem;
-    return itemWithoutRating as WatchlistItem;
-  }
-
-  return rating === undefined ? updatedItem : { ...updatedItem, rating };
-}
+/** Stage 5 name kept for consumers; Stage 6 uses the shared utility name. */
+export const applyWatchlistItemUpdate = applyWatchlistUpdate;

@@ -1,10 +1,10 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { selectIsAuthenticated } from '../features/auth/authSelectors';
-import { loggedOut } from '../features/auth/authSlice';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useEffect } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { cn } from '../lib/utils';
+import { useAuthStore } from '../stores/authStore';
+import { useUiStore } from '../stores/uiStore';
 import ThemeToggle from './ThemeToggle';
 import { Button } from './ui/button';
-import { cn } from '../lib/utils';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -15,8 +15,15 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   );
 
 export default function AppLayout() {
-  const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const signOut = useAuthStore((state) => state.signOut);
+  const cancelRemoval = useUiStore((state) => state.cancelRemoval);
+  const { pathname } = useLocation();
+
+  // A pending confirmation belongs to the route that opened it.
+  useEffect(() => {
+    cancelRemoval();
+  }, [pathname, cancelRemoval]);
 
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-4 py-6 sm:px-6">
@@ -38,12 +45,7 @@ export default function AppLayout() {
           Watchlist
         </NavLink>
         {isAuthenticated ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => dispatch(loggedOut())}
-          >
+          <Button type="button" variant="ghost" size="sm" onClick={signOut}>
             Sign out
           </Button>
         ) : (

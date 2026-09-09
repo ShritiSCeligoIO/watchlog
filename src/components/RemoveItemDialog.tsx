@@ -5,17 +5,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from './ui/dialog';
 import { Button } from './ui/button';
-import type { ReactElement } from 'react';
 
 interface RemoveItemDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   itemTitle: string;
   onConfirm: () => void;
-  trigger: ReactElement;
 }
 
 export default function RemoveItemDialog({
@@ -23,7 +20,6 @@ export default function RemoveItemDialog({
   onOpenChange,
   itemTitle,
   onConfirm,
-  trigger,
 }: RemoveItemDialogProps) {
   function handleConfirm() {
     onConfirm();
@@ -32,7 +28,6 @@ export default function RemoveItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent aria-describedby="remove-item-description">
         <DialogHeader>
           <DialogTitle>Remove from watchlist?</DialogTitle>
