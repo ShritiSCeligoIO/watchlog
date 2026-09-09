@@ -1,0 +1,56 @@
+{
+  "appName": "WatchLog",
+  "tagline": "Lleva un registro de las películas y los libros que quieres ver, estás viendo o ya has terminado.",
+  "nav": {
+    "label": "Principal",
+    "watchlist": "Mi lista",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión"
+  },
+  "actions": {
+    "add": "Añadir",
+    "added": "Añadido",
+    "back": "Volver a mi lista",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "edit": "Editar",
+    "remove": "Eliminar",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "tryAgain": "Reintentar",
+    "view": "Ver"
+  },
+  "theme": {
+    "toLight": "Cambiar al modo claro",
+    "toDark": "Cambiar al modo oscuro"
+  },
+  "language": {
+    "label": "Idioma",
+    "switching": "Cambiando de idioma…",
+    "failed": "No se pudo cambiar el idioma."
+  },
+  "mediaType": {
+    "movie": "Película",
+    "book": "Libro",
+    "movies": "Películas",
+    "books": "Libros"
+  },
+  "status": {
+    "want": "Pendiente",
+    "watching": "Viendo / Leyendo",
+    "done": "Terminado"
+  },
+  "rating": {
+    "outOfFive": "★ {{rating}} / 5",
+    "none": "Sin valoración",
+    "stars": "★ {{rating}}"
+  },
+  "errorBoundary": {
+    "title": "WatchLog",
+    "message": "Algo ha ido mal. Actualiza la página para volver a intentarlo."
+  },
+  "devControls": {
+    "label": "Simular un fallo del servidor",
+    "help": "Hace que se rechace toda escritura en la lista. Añade, edita o elimina un elemento para ver cómo el cambio se aplica al instante y luego se revierte."
+  }
+}

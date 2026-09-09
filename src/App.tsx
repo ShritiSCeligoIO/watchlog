@@ -19,7 +19,11 @@ function EditItemRoute() {
   );
 }
 
-/** TanStack Query needs a provider; Zustand stores do not. */
+/**
+ * Only server state needs a provider now. The Zustand stores are module
+ * singletons that components import directly, so there is no UI-state provider
+ * to wrap the tree in.
+ */
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>

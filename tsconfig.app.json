@@ -26,6 +26,7 @@
     "src/bootstrap.tsx",
     "src/index.tsx",
     "src/lib/**/*",
+    "src/i18n/**/*",
     "src/stores/**/*",
     "src/queries/**/*",
     "src/features/**/*",

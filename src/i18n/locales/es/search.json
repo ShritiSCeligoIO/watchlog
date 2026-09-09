@@ -1,0 +1,22 @@
+{
+  "label": "Buscar",
+  "heading": "Buscar",
+  "mediaTypeLabel": "Tipo de contenido a buscar",
+  "books": {
+    "placeholder": "Busca libros por título…",
+    "label": "Buscar libros"
+  },
+  "movies": {
+    "placeholder": "Busca películas por título…",
+    "label": "Buscar películas"
+  },
+  "movieUnavailable": "La búsqueda de películas necesita TMDB_API_KEY en el archivo .env de la raíz del repositorio. Reinicia <code>npm run dev</code> después de añadirla.",
+  "minLength_one": "Escribe al menos {{count}} carácter para buscar.",
+  "minLength_other": "Escribe al menos {{count}} caracteres para buscar.",
+  "noResults": "No se han encontrado resultados para «{{query}}».",
+  "searching": "Buscando…",
+  "errors": {
+    "search": "La búsqueda ha fallado",
+    "add": "No se ha podido añadir ese elemento."
+  }
+}

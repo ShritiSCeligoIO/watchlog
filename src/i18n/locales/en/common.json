@@ -1,0 +1,56 @@
+{
+  "appName": "WatchLog",
+  "tagline": "Track movies and books you want to watch, are watching, or have finished.",
+  "nav": {
+    "label": "Main",
+    "watchlist": "Watchlist",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "actions": {
+    "add": "Add",
+    "added": "Added",
+    "back": "Back to watchlist",
+    "cancel": "Cancel",
+    "close": "Close",
+    "edit": "Edit",
+    "remove": "Remove",
+    "save": "Save",
+    "saving": "Saving…",
+    "tryAgain": "Try again",
+    "view": "View"
+  },
+  "theme": {
+    "toLight": "Switch to light mode",
+    "toDark": "Switch to dark mode"
+  },
+  "language": {
+    "label": "Language",
+    "switching": "Changing language…",
+    "failed": "Could not change language."
+  },
+  "mediaType": {
+    "movie": "Movie",
+    "book": "Book",
+    "movies": "Movies",
+    "books": "Books"
+  },
+  "status": {
+    "want": "Want",
+    "watching": "Watching / Reading",
+    "done": "Done"
+  },
+  "rating": {
+    "outOfFive": "★ {{rating}} / 5",
+    "none": "No rating",
+    "stars": "★ {{rating}}"
+  },
+  "errorBoundary": {
+    "title": "WatchLog",
+    "message": "Something went wrong. Refresh the page to try again."
+  },
+  "devControls": {
+    "label": "Simulate server failure",
+    "help": "Makes every watchlist write reject. Add, edit, or remove an item to see the change apply instantly and then roll back."
+  }
+}

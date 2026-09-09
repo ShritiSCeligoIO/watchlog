@@ -1,0 +1,61 @@
+{
+  "page": {
+    "label": "Watchlist",
+    "heading_one": "Your watchlist ({{count}} item)",
+    "heading_other": "Your watchlist ({{count}} items)",
+    "headingFiltered_one": "Your watchlist ({{count}} of {{total}} item)",
+    "headingFiltered_other": "Your watchlist ({{count}} of {{total}} items)",
+    "refreshing": "Refreshing…",
+    "loading": "Loading your watchlist…",
+    "empty": "No items match the current filters.",
+    "share": "Share this view:"
+  },
+  "filters": {
+    "heading": "Filters",
+    "type": "Type",
+    "status": "Status",
+    "byType": "Filter list by type",
+    "byStatus": "Filter list by status",
+    "allTypes": "All types",
+    "allStatuses": "All statuses"
+  },
+  "stats": {
+    "label": "Watchlist statistics",
+    "items": "Items",
+    "completed": "Completed",
+    "averageRating": "Average rating",
+    "noValue": "—"
+  },
+  "removeDialog": {
+    "title": "Remove from watchlist?",
+    "description": "“{{title}}” will be removed. This cannot be undone until you search and add it again."
+  },
+  "detail": {
+    "label": "Item details",
+    "loading": "Loading item…",
+    "removing": "Removing…",
+    "notFoundTitle": "Item not found",
+    "loadErrorTitle": "Could not load this item",
+    "noMatch": "No watchlist item matches <code>{{itemId}}</code>.",
+    "genre": "Genre",
+    "added": "Added",
+    "rating": "Rating",
+    "director": "Director",
+    "year": "Year",
+    "author": "Author",
+    "published": "Published"
+  },
+  "edit": {
+    "label": "Edit item",
+    "heading": "Edit {{title}}",
+    "status": "Status",
+    "genre": "Genre",
+    "rating": "Rating"
+  },
+  "errors": {
+    "load": "Could not load your watchlist.",
+    "remove": "Could not remove that item.",
+    "save": "Could not save your changes.",
+    "retry": "Please try again."
+  }
+}

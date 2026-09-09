@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { toErrorMessage } from '../api/isRetryableError.js';
 import { useUpdateWatchlistItem } from '../features/watchlist/watchlistQueries';
+import { STATUS_LABEL_KEYS } from '../i18n/labelKeys.js';
 import type {
   StarRating,
   WatchStatus,
@@ -13,27 +15,38 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 
-const STATUS_OPTIONS: { value: WatchStatus; label: string }[] = [
-  { value: 'want', label: 'Want' },
-  { value: 'watching', label: 'Watching / Reading' },
-  { value: 'done', label: 'Done' },
-];
+/**
+ * Values only. These arrays used to carry their own `label: 'Want'` strings,
+ * which is why "Watching / Reading" existed twice in the codebase — once here
+ * and once in the watchlist filters — and could be reworded in one place
+ * without the other. The wording now comes from the shared status keys, so the
+ * form and the filter cannot disagree.
+ */
+const STATUS_VALUES: readonly WatchStatus[] = ['want', 'watching', 'done'];
 
-const RATING_OPTIONS: { value: StarRating | 'none'; label: string }[] = [
-  { value: 'none', label: 'No rating' },
-  { value: 1, label: '★ 1' },
-  { value: 2, label: '★ 2' },
-  { value: 3, label: '★ 3' },
-  { value: 4, label: '★ 4' },
-  { value: 5, label: '★ 5' },
+const RATING_VALUES: readonly (StarRating | 'none')[] = [
+  'none',
+  1,
+  2,
+  3,
+  4,
+  5,
 ];
 
 interface ItemEditFormProps {
   item: WatchlistItem;
 }
 
-/** Mount only after query data exists so form state uses real values. */
+/**
+ * Split out from the page so that it mounts only once the item has loaded.
+ *
+ * The earlier stages could seed `useState` straight from the item because the
+ * data was already in memory. Now the first render happens before the fetch
+ * resolves, and state initialisers run once — so a form mounted early would
+ * hold the fallback values forever.
+ */
 export default function ItemEditForm({ item }: ItemEditFormProps) {
+  const { t } = useTranslation(['watchlist', 'common']);
   const navigate = useNavigate();
   const updateItem = useUpdateWatchlistItem();
 
@@ -59,31 +72,39 @@ export default function ItemEditForm({ item }: ItemEditFormProps) {
     );
   }
 
+  function ratingLabel(value: StarRating | 'none'): string {
+    return value === 'none'
+      ? t('common:rating.none')
+      : t('common:rating.stars', { rating: value });
+  }
+
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
       <fieldset className="space-y-3">
-        <legend className="text-sm font-medium">Status</legend>
+        <legend className="text-sm font-medium">
+          {t('watchlist:edit.status')}
+        </legend>
         <RadioGroup
           value={status}
-          aria-label="Status"
+          aria-label={t('watchlist:edit.status')}
           className="grid gap-3 sm:grid-cols-3"
           onValueChange={(value) => setStatus(value as WatchStatus)}
         >
-          {STATUS_OPTIONS.map((option) => (
+          {STATUS_VALUES.map((value) => (
             <label
-              key={option.value}
-              htmlFor={`status-${option.value}`}
+              key={value}
+              htmlFor={`status-${value}`}
               className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
             >
-              <RadioGroupItem value={option.value} id={`status-${option.value}`} />
-              {option.label}
+              <RadioGroupItem value={value} id={`status-${value}`} />
+              {t(`common:${STATUS_LABEL_KEYS[value]}`)}
             </label>
           ))}
         </RadioGroup>
       </fieldset>
 
       <div className="space-y-2">
-        <Label htmlFor="genre">Genre</Label>
+        <Label htmlFor="genre">{t('watchlist:edit.genre')}</Label>
         <Input
           id="genre"
           type="text"
@@ -94,26 +115,28 @@ export default function ItemEditForm({ item }: ItemEditFormProps) {
 
       {status === 'done' && (
         <fieldset className="space-y-3">
-          <legend className="text-sm font-medium">Rating</legend>
+          <legend className="text-sm font-medium">
+            {t('watchlist:edit.rating')}
+          </legend>
           <RadioGroup
             value={rating === '' ? 'none' : String(rating)}
-            aria-label="Rating"
+            aria-label={t('watchlist:edit.rating')}
             className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6"
             onValueChange={(value) =>
               setRating(value === 'none' ? '' : (Number(value) as StarRating))
             }
           >
-            {RATING_OPTIONS.map((option) => (
+            {RATING_VALUES.map((value) => (
               <label
-                key={String(option.value)}
-                htmlFor={`rating-${option.value}`}
+                key={String(value)}
+                htmlFor={`rating-${value}`}
                 className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring"
               >
                 <RadioGroupItem
-                  value={String(option.value)}
-                  id={`rating-${option.value}`}
+                  value={String(value)}
+                  id={`rating-${value}`}
                 />
-                {option.label}
+                {ratingLabel(value)}
               </label>
             ))}
           </RadioGroup>
@@ -122,16 +145,18 @@ export default function ItemEditForm({ item }: ItemEditFormProps) {
 
       {updateItem.isError && (
         <p className="text-sm text-destructive" role="alert">
-          {toErrorMessage(updateItem.error, 'Could not save your changes.')}
+          {toErrorMessage(updateItem.error, t('watchlist:errors.save'))}
         </p>
       )}
 
       <div className="flex flex-wrap gap-2">
         <Button type="submit" disabled={updateItem.isPending}>
-          {updateItem.isPending ? 'Saving…' : 'Save'}
+          {updateItem.isPending
+            ? t('common:actions.saving')
+            : t('common:actions.save')}
         </Button>
         <Button variant="secondary" asChild>
-          <Link to={`/items/${item.id}`}>Cancel</Link>
+          <Link to={`/items/${item.id}`}>{t('common:actions.cancel')}</Link>
         </Button>
       </div>
     </form>

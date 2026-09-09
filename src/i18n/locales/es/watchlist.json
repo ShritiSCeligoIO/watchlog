@@ -1,0 +1,61 @@
+{
+  "page": {
+    "label": "Mi lista",
+    "heading_one": "Mi lista ({{count}} elemento)",
+    "heading_other": "Mi lista ({{count}} elementos)",
+    "headingFiltered_one": "Mi lista ({{count}} de {{total}} elemento)",
+    "headingFiltered_other": "Mi lista ({{count}} de {{total}} elementos)",
+    "refreshing": "Actualizando…",
+    "loading": "Cargando tu lista…",
+    "empty": "Ningún elemento coincide con los filtros actuales.",
+    "share": "Comparte esta vista:"
+  },
+  "filters": {
+    "heading": "Filtros",
+    "type": "Tipo",
+    "status": "Estado",
+    "byType": "Filtrar la lista por tipo",
+    "byStatus": "Filtrar la lista por estado",
+    "allTypes": "Todos los tipos",
+    "allStatuses": "Todos los estados"
+  },
+  "stats": {
+    "label": "Estadísticas de la lista",
+    "items": "Elementos",
+    "completed": "Completado",
+    "averageRating": "Valoración media",
+    "noValue": "—"
+  },
+  "removeDialog": {
+    "title": "¿Eliminar de la lista?",
+    "description": "«{{title}}» se eliminará. No podrás deshacerlo hasta que vuelvas a buscarlo y añadirlo."
+  },
+  "detail": {
+    "label": "Detalles del elemento",
+    "loading": "Cargando el elemento…",
+    "removing": "Eliminando…",
+    "notFoundTitle": "Elemento no encontrado",
+    "loadErrorTitle": "No se ha podido cargar este elemento",
+    "noMatch": "Ningún elemento de la lista coincide con <code>{{itemId}}</code>.",
+    "genre": "Género",
+    "added": "Añadido",
+    "rating": "Valoración",
+    "director": "Dirección",
+    "year": "Año",
+    "author": "Autoría",
+    "published": "Publicado"
+  },
+  "edit": {
+    "label": "Editar elemento",
+    "heading": "Editar {{title}}",
+    "status": "Estado",
+    "genre": "Género",
+    "rating": "Valoración"
+  },
+  "errors": {
+    "load": "No se ha podido cargar tu lista.",
+    "remove": "No se ha podido eliminar ese elemento.",
+    "save": "No se han podido guardar los cambios.",
+    "retry": "Vuelve a intentarlo."
+  }
+}
