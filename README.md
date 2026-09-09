@@ -1,7 +1,12 @@
-# WatchLog — Stage 6
+# WatchLog — nine-stage learning project
 
-WatchLog is a beginner React 19 app for tracking movies and books. Stage 6
-keeps the existing UI and routes while replacing Redux with:
+WatchLog is a beginner React 19 app for tracking movies and books.
+
+This `main` branch deliberately runs the **Stage 6 implementation**, the latest
+stage studied so far. It also carries all nine concise guides. Start with
+[STAGES.md](./STAGES.md) for the complete learning path.
+
+Stage 6 keeps the existing UI and routes while replacing Redux with:
 
 - Zustand for state owned by this browser tab
 - TanStack Query for data copied from an API
@@ -56,3 +61,12 @@ optimistically, returns when the write fails, and an error appears.
 
 See [STAGE-6.md](./STAGE-6.md) for the guided explanation and
 [docs/state-split.md](./docs/state-split.md) for the field ownership map.
+
+To run another stage, switch to its branch and reinstall dependencies:
+
+```bash
+git switch stage-8
+npm install
+npm run install:host
+npm run dev:mfe
+```
