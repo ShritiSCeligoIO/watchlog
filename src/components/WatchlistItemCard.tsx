@@ -1,39 +1,32 @@
-import { useSelection } from '../context/SelectionContext';
-import { useWatchlistData } from '../context/WatchlistDataContext';
+import { Link } from 'react-router-dom';
 import type { WatchlistItem } from '../types/watchlistItem.js';
 import { hasRating } from '../types/watchlistItem.js';
 
 interface WatchlistItemCardProps {
   item: WatchlistItem;
+  filterQuery: string;
+  onRemove: (id: string) => void;
 }
 
-/** Receive display data as a prop; read shared actions from context. */
-export default function WatchlistItemCard({ item }: WatchlistItemCardProps) {
-  const { selectedId, selectItem, clearSelection } = useSelection();
-  const { removeItem } = useWatchlistData();
-
-  const isSelected = selectedId === item.id;
-
-  function handleRemove() {
-    if (isSelected) {
-      clearSelection();
-    }
-    removeItem(item.id);
-  }
-
+/** Link each card to the item's shareable detail URL. */
+export default function WatchlistItemCard({
+  item,
+  filterQuery,
+  onRemove,
+}: WatchlistItemCardProps) {
   return (
     <article
-      className={isSelected ? 'card selected' : 'card'}
+      className="card"
       data-testid={`watchlist-item-${item.id}`}
     >
       <h2>
-        <button
-          type="button"
+        <Link
+          to={`/items/${item.id}`}
+          state={{ filterQuery }}
           className="card-title"
-          onClick={() => selectItem(item.id)}
         >
           {item.title}
-        </button>
+        </Link>
       </h2>
 
       <div className="badges">
@@ -57,17 +50,17 @@ export default function WatchlistItemCard({ item }: WatchlistItemCardProps) {
       )}
 
       <div className="actions">
-        <button
-          type="button"
+        <Link
+          to={`/items/${item.id}`}
+          state={{ filterQuery }}
           className="button small"
-          onClick={() => selectItem(item.id)}
         >
           View
-        </button>
+        </Link>
         <button
           type="button"
           className="button danger small"
-          onClick={handleRemove}
+          onClick={() => onRemove(item.id)}
         >
           Remove
         </button>

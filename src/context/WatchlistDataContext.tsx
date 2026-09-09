@@ -5,12 +5,17 @@ import {
   type ReactNode,
 } from 'react';
 import { seedWatchlist } from '../fixtures/seedWatchlist.js';
-import type { WatchlistItem } from '../types/watchlistItem.js';
+import {
+  applyWatchlistItemUpdate,
+  type WatchlistItem,
+  type WatchlistItemUpdate,
+} from '../types/watchlistItem.js';
 
 interface WatchlistDataContextValue {
   items: WatchlistItem[];
   addItem: (item: WatchlistItem) => void;
   removeItem: (id: string) => void;
+  updateItem: (id: string, update: WatchlistItemUpdate) => void;
   getItemById: (id: string) => WatchlistItem | undefined;
 }
 
@@ -37,13 +42,21 @@ export function WatchlistDataProvider({ children }: { children: ReactNode }) {
     );
   }
 
+  function updateItem(id: string, update: WatchlistItemUpdate) {
+    setItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === id ? applyWatchlistItemUpdate(item, update) : item
+      )
+    );
+  }
+
   function getItemById(id: string) {
     return items.find((item) => item.id === id);
   }
 
   return (
     <WatchlistDataContext.Provider
-      value={{ items, addItem, removeItem, getItemById }}
+      value={{ items, addItem, removeItem, updateItem, getItemById }}
     >
       {children}
     </WatchlistDataContext.Provider>

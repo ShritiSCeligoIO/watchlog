@@ -20,6 +20,7 @@
     "src/utils/searchMappers.ts",
     "src/utils/filterWatchlistItems.ts",
     "src/components/**/*",
+    "src/pages/**/*",
     "src/hooks/**/*",
     "src/context/**/*",
     "src/constants/**/*",

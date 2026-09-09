@@ -12,7 +12,8 @@ body {
 
 button,
 input,
-select {
+select,
+a {
   font: inherit;
 }
 
@@ -29,8 +30,7 @@ select {
 .app-header h1,
 .app-header p,
 .panel h2,
-.card h2,
-.detail-panel h2 {
+.card h2 {
   margin-top: 0;
 }
 
@@ -38,16 +38,29 @@ select {
   color: #6b7280;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+.nav {
+  display: flex;
   gap: 1rem;
-  align-items: start;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.nav a,
+.link-button {
+  color: #1d4ed8;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.nav .active {
+  font-weight: 700;
 }
 
 .panel,
-.card,
-.detail-panel {
+.card {
   padding: 1rem;
   background: white;
   border: 1px solid #d1d5db;
@@ -124,13 +137,7 @@ select {
   gap: 0.5rem;
 }
 
-.card.selected {
-  border-color: #2563eb;
-  background: #eff6ff;
-}
-
-.card h2,
-.detail-panel h2 {
+.card h2 {
   margin-bottom: 0.6rem;
   font-size: 1.1rem;
 }
@@ -138,9 +145,7 @@ select {
 .card-title {
   padding: 0;
   color: inherit;
-  background: none;
-  border: 0;
-  cursor: pointer;
+  text-decoration-color: #93c5fd;
 }
 
 .badge {
@@ -173,12 +178,14 @@ select {
 }
 
 .button {
+  display: inline-block;
   padding: 0.45rem 0.75rem;
   color: #1d4ed8;
   background: white;
   border: 1px solid #2563eb;
   border-radius: 0.25rem;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .button.primary {
@@ -196,8 +203,8 @@ select {
   font-size: 0.875rem;
 }
 
-.detail-panel.empty {
-  color: #6b7280;
+.detail-page {
+  max-width: 640px;
 }
 
 .detail-row {
@@ -213,8 +220,15 @@ select {
   text-align: right;
 }
 
-@media (max-width: 700px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
+.edit-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 28rem;
+}
+
+.edit-form input,
+.edit-form select {
+  padding: 0.5rem;
+  border: 1px solid #9ca3af;
+  border-radius: 0.25rem;
 }

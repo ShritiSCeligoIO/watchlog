@@ -26,7 +26,13 @@ export interface BookItem extends BaseWatchlistItem {
 
 export type WatchlistItem = MovieItem | BookItem;
 
-export type WatchlistItemUpdate = Partial<Omit<WatchlistItem, 'id' | 'type'>>;
+export type WatchlistItemUpdate = Omit<
+  Partial<Omit<WatchlistItem, 'id' | 'type'>>,
+  'rating'
+> & {
+  /** null means remove an existing rating. */
+  rating?: StarRating | null;
+};
 
 export interface WatchlistStats {
   totalCount: number;
@@ -48,4 +54,20 @@ export function hasRating(
   item: WatchlistItem
 ): item is WatchlistItem & { rating: StarRating } {
   return item.rating !== undefined;
+}
+
+/** Apply edit-form changes while enforcing rating rules. */
+export function applyWatchlistItemUpdate(
+  item: WatchlistItem,
+  update: WatchlistItemUpdate
+): WatchlistItem {
+  const { rating, ...otherChanges } = update;
+  const updatedItem = { ...item, ...otherChanges };
+
+  if (updatedItem.status !== 'done' || rating === null) {
+    const { rating: _oldRating, ...itemWithoutRating } = updatedItem;
+    return itemWithoutRating as WatchlistItem;
+  }
+
+  return rating === undefined ? updatedItem : { ...updatedItem, rating };
 }

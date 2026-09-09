@@ -1,8 +1,7 @@
-# WatchLog — Stage 2
+# WatchLog — Stage 3
 
-WatchLog is a beginner React 19 app for tracking movies and books. Stage 2 keeps
-the reusable TypeScript library from Stage 1 and adds a single-page list/detail
-interface.
+WatchLog is a beginner React 19 app for tracking movies and books. Stage 3 keeps
+the Stage 1 library and Stage 2 search behavior, then adds React Router.
 
 ## Requirements
 
@@ -38,9 +37,10 @@ creates the browser app in `build/`.
 ```text
 src/
 ├── api/          Open Library and TMDB clients
-├── components/   Search, list, cards, details, and error UI
-├── context/      Shared watchlist and selection state
-├── hooks/        Search and filter behavior
+├── components/   Shared layout, route guards, search, and cards
+├── context/      Shared watchlist data and mock authentication
+├── hooks/        Abortable search and URL-backed filters
+├── pages/        Watchlist, detail, edit, and login routes
 ├── types/        Movie and book data types
 ├── utils/        Reusable transformations
 ├── index.tsx     Direct browser entry
@@ -49,4 +49,7 @@ src/
 
 Tests live beside the files they cover as `*.test.ts`.
 
-See [STAGE-2.md](./STAGE-2.md) for the mental model and guided user flow.
+The watchlist is at `/watchlist`. Type and status filters live in its query
+string, item details live at `/items/:itemId`, and editing requires mock sign-in.
+
+See [STAGE-3.md](./STAGE-3.md) for the route map and guided edit flow.
