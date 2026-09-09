@@ -3,8 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
-import './styles.css';
+import { applyTheme, resolveInitialTheme } from './lib/theme';
+import './styles/globals.css';
 
+// Apply the saved theme before React paints to avoid a light-mode flash.
+applyTheme(resolveInitialTheme());
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {

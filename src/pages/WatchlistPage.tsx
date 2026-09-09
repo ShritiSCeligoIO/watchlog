@@ -7,6 +7,14 @@ import type {
 import { useWatchlistData } from '../context/WatchlistDataContext';
 import { useWatchlistFilters } from '../hooks/useWatchlistFilters';
 import { filterWatchlistItems } from '../utils/filterWatchlistItems.js';
+import { Label } from '../components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 
 /** Render the searchable list whose filters live in the URL. */
 export default function WatchlistPage() {
@@ -28,50 +36,54 @@ export default function WatchlistPage() {
     <section aria-label="Watchlist">
       <SearchPanel />
 
-      <div className="panel filters">
-        <h2>Filters</h2>
-        <div className="form-row">
-          <label className="filter-field">
-            Type
-            <select
-              aria-label="Filter list by type"
+      <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm sm:p-6">
+        <h2 className="mb-4 text-lg font-semibold">Filters</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="type-filter">Type</Label>
+            <Select
               value={typeFilter}
-              onChange={(event) =>
-                setTypeFilter(event.target.value as TypeFilter)
-              }
+              onValueChange={(value) => setTypeFilter(value as TypeFilter)}
             >
-              <option value="all">All types</option>
-              <option value="movie">Movies</option>
-              <option value="book">Books</option>
-            </select>
-          </label>
-          <label className="filter-field">
-            Status
-            <select
-              aria-label="Filter list by status"
+              <SelectTrigger id="type-filter" aria-label="Filter list by type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                <SelectItem value="movie">Movies</SelectItem>
+                <SelectItem value="book">Books</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="status-filter">Status</Label>
+            <Select
               value={statusFilter}
-              onChange={(event) =>
-                setStatusFilter(event.target.value as StatusFilter)
-              }
+              onValueChange={(value) => setStatusFilter(value as StatusFilter)}
             >
-              <option value="all">All statuses</option>
-              <option value="want">Want</option>
-              <option value="watching">Watching / Reading</option>
-              <option value="done">Done</option>
-            </select>
-          </label>
+              <SelectTrigger id="status-filter" aria-label="Filter list by status">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="want">Want</SelectItem>
+                <SelectItem value="watching">Watching / Reading</SelectItem>
+                <SelectItem value="done">Done</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
-      <h2 className="list-heading">
+      <h2 className="mb-4 text-xl font-semibold">
         Your watchlist ({filteredItems.length}
         {filteredItems.length !== items.length ? ` of ${items.length}` : ''})
       </h2>
 
       {filteredItems.length === 0 ? (
-        <p className="message">No items match the current filters.</p>
+        <p className="text-sm text-muted-foreground">No items match the current filters.</p>
       ) : (
-        <div className="card-list">
+        <div className="grid gap-4 sm:grid-cols-2">
           {filteredItems.map((item) => (
             <WatchlistItemCard
               key={item.id}

@@ -1,4 +1,5 @@
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
 import { useAuth } from '../context/AuthContext';
 
 /** Provide a mock login and return visitors to the protected URL they requested. */
@@ -41,14 +42,14 @@ export default function LoginPage() {
   }
 
   return (
-    <section className="panel" aria-label="Sign in">
-      <h2>Sign in</h2>
-      <p className="message">
+    <section className="rounded-xl border bg-card p-6 shadow-sm sm:max-w-md" aria-label="Sign in">
+      <h2 className="text-xl font-semibold">Sign in</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
         This mock sign-in keeps Stage 3 focused on protected routes.
       </p>
-      <button type="button" className="button primary" onClick={handleLogin}>
+      <Button type="button" className="mt-4" onClick={handleLogin}>
         Sign in
-      </button>
+      </Button>
     </section>
   );
 }

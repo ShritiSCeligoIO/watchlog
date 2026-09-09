@@ -1,7 +1,8 @@
-# WatchLog — Stage 3
+# WatchLog — Stage 4
 
-WatchLog is a beginner React 19 app for tracking movies and books. Stage 3 keeps
-the Stage 1 library and Stage 2 search behavior, then adds React Router.
+WatchLog is a beginner React 19 app for tracking movies and books. Stage 4
+keeps the data, search, and routing behavior from Stages 1–3 and redesigns the
+interface with Tailwind CSS and accessible Radix UI controls.
 
 ## Requirements
 
@@ -16,40 +17,33 @@ npm install
 cp .env.example .env
 ```
 
-Add a [TMDB API key](https://www.themoviedb.org/settings/api) to `.env` for
-movie search. Book search works without a key.
+Add a [TMDB API key](https://www.themoviedb.org/settings/api) to `.env` if you
+want movie search. Book search works without a key.
 
 ## Commands
 
 ```bash
 npm test
-npm run test:watch
-npm run build
+npx tsc -p tsconfig.app.json
+npm run build:lib
 npm run build:app
 npm run dev
 ```
 
-`npm run build` creates the reusable library in `dist/`. `npm run build:app`
-creates the browser app in `build/`.
+The app opens at the URL printed by Vite. `build:lib` creates the reusable
+library in `dist/`; `build:app` creates the browser app in `build/`.
 
-## Project structure
+## What Stage 4 adds
 
-```text
-src/
-├── api/          Open Library and TMDB clients
-├── components/   Shared layout, route guards, search, and cards
-├── context/      Shared watchlist data and mock authentication
-├── hooks/        Abortable search and URL-backed filters
-├── pages/        Watchlist, detail, edit, and login routes
-├── types/        Movie and book data types
-├── utils/        Reusable transformations
-├── index.tsx     Direct browser entry
-└── lib/index.ts  Reusable library entry
-```
+- Responsive cards and page layouts
+- Light and dark design tokens
+- A saved theme choice applied before the first paint
+- Keyboard-friendly Tabs, Select, Dialog, and Radio Group controls
+- A confirmation dialog before removing an item
+- Small reusable UI wrappers in `src/components/ui/`
 
-Tests live beside the files they cover as `*.test.ts`.
+The application behavior remains local and intentionally simple: mock sign-in,
+in-memory watchlist changes, URL-backed filters, Open Library book search, and
+optional TMDB movie search.
 
-The watchlist is at `/watchlist`. Type and status filters live in its query
-string, item details live at `/items/:itemId`, and editing requires mock sign-in.
-
-See [STAGE-3.md](./STAGE-3.md) for the route map and guided edit flow.
+See [STAGE-4.md](./STAGE-4.md) for the guided explanation and Stage 5 handoff.

@@ -12,6 +12,9 @@ import {
   watchlistIdForBookSearch,
   watchlistIdForMovieSearch,
 } from '../utils/searchMappers.js';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 /** Search remote media and add a result to the shared watchlist. */
 export default function SearchPanel() {
@@ -40,58 +43,65 @@ export default function SearchPanel() {
   }
 
   return (
-    <section aria-label="Search" className="panel">
-      <h2>Search</h2>
+    <section aria-label="Search" className="mb-6 rounded-xl border bg-card p-4 shadow-sm sm:p-6">
+      <h2 className="mb-4 text-lg font-semibold">Search</h2>
 
-      <div className="form-row">
-        <select
-          value={mediaType}
-          aria-label="Search media type"
-          onChange={(event) =>
-            setMediaType(event.target.value as SearchMediaType)
-          }
-        >
-          <option value="book">Books</option>
-          <option value="movie">Movies</option>
-        </select>
-        <input
-          type="search"
-          name="searchQuery"
-          value={query}
-          placeholder={
-            mediaType === 'book'
-              ? 'Search books by title…'
-              : 'Search movies by title…'
-          }
-          onChange={(event) => setQuery(event.target.value)}
-        />
-      </div>
+      <Tabs
+        value={mediaType}
+        onValueChange={(value) => setMediaType(value as SearchMediaType)}
+      >
+        <TabsList aria-label="Search media type">
+          <TabsTrigger value="book">Books</TabsTrigger>
+          <TabsTrigger value="movie">Movies</TabsTrigger>
+        </TabsList>
+        <TabsContent value="book">
+          <Input
+            type="search"
+            name="searchQuery"
+            value={query}
+            placeholder="Search books by title…"
+            aria-label="Search books"
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </TabsContent>
+        <TabsContent value="movie">
+          <Input
+            type="search"
+            name="searchQuery"
+            value={query}
+            placeholder="Search movies by title…"
+            aria-label="Search movies"
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </TabsContent>
+      </Tabs>
 
       {movieSearchUnavailable && (
-        <p className="message error">
+        <p className="mt-3 text-sm text-destructive" role="alert">
           Movie search needs TMDB_API_KEY in .env at the repo root. Restart{' '}
-          <code>npm run dev</code> after adding it.
+          <code className="rounded bg-muted px-1 py-0.5 text-xs">npm run dev</code>{' '}
+          after adding it.
         </p>
       )}
       {trimmedQuery.length > 0 && !queryLongEnough && (
-        <p className="message">
+        <p className="mt-3 text-sm text-muted-foreground">
           Type at least {MIN_SEARCH_QUERY_LENGTH} characters to search.
         </p>
       )}
       {showNoResults && (
-        <p className="message">
+        <p className="mt-3 text-sm text-muted-foreground">
           No results found for &quot;{trimmedQuery}&quot;.
         </p>
       )}
       {!movieSearchUnavailable && loading && (
-        <p className="message" role="status">Searching…</p>
+        <p className="mt-3 text-sm text-muted-foreground" role="status">Searching…</p>
       )}
       {!movieSearchUnavailable && error && (
-        <p className="message error" role="alert">{error}</p>
+        <p className="mt-3 text-sm text-destructive" role="alert">{error}</p>
       )}
 
       {!movieSearchUnavailable && !loading && !error && results.length > 0 && (
-        <ul className="search-results">
+        <ul className="mt-4 space-y-2">
           {results.map((result) => {
             const watchlistId =
               mediaType === 'book'
@@ -102,19 +112,19 @@ export default function SearchPanel() {
             return (
               <li
                 key={`${mediaType}-${result.id}`}
-                className="search-result"
+                className="flex items-center justify-between gap-3 rounded-lg border bg-background px-3 py-2"
               >
-                <span>{result.title}</span>
+                <span className="text-sm font-medium">{result.title}</span>
                 {alreadyAdded ? (
-                  <span className="message">Added</span>
+                  <span className="text-xs text-muted-foreground">Added</span>
                 ) : (
-                  <button
+                  <Button
                     type="button"
-                    className="button primary small"
+                    size="sm"
                     onClick={() => handleAdd(result)}
                   >
                     Add
-                  </button>
+                  </Button>
                 )}
               </li>
             );

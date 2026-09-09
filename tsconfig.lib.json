@@ -22,7 +22,7 @@
     "src/utils/searchMappers.ts",
     "src/fixtures/**/*",
     "src/config.ts",
-    "src/lib/**/*"
+    "src/lib/index.ts"
   ],
   "exclude": ["node_modules", "dist", "build", "**/*.test.ts", "**/*.test.tsx"]
 }
