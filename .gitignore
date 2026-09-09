@@ -5,5 +5,7 @@ reports/
 .env
 .env.local
 *.log
+server.log.*
+.*-audit.json
 .DS_Store
 coverage/

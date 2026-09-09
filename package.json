@@ -27,6 +27,7 @@
     "typecheck:locales": "tsc -p tsconfig.locales.json --noEmit"
   },
   "dependencies": {
+    "@celigo/logger": "2.0.6",
     "@radix-ui/react-dialog": "1.1.6",
     "@radix-ui/react-label": "2.1.2",
     "@radix-ui/react-radio-group": "1.2.3",

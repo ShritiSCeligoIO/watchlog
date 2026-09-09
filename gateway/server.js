@@ -1,8 +1,10 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import celigoLogger from '@celigo/logger';
 import cors from 'cors';
 import express from 'express';
 
+const { logger } = celigoLogger;
 const gatewayDirectory = path.dirname(fileURLToPath(import.meta.url));
 const buildDirectory = path.resolve(gatewayDirectory, '../build');
 
@@ -54,8 +56,8 @@ app.get('*', (_request, response) => {
 });
 
 app.use((error, request, response, _next) => {
-  process.stderr.write(
-    `logName=gatewayRequestFailed, path=${request.path}, errorName=${error.name}\n`
+  logger.error(
+    `logName=gatewayRequestFailed, path=${request.path}, errorName=${error.name}`
   );
   response.status(403).type('text/plain').send('Forbidden');
 });
