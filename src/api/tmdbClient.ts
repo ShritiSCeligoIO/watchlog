@@ -1,6 +1,5 @@
 import { config } from '../config.js';
 
-/** Normalized movie result from TMDB search. */
 export interface MovieSearchResult {
   id: string;
   title: string;
@@ -19,7 +18,6 @@ interface TmdbSearchResponse {
   results?: TmdbMovieDoc[];
 }
 
-/** TMDB genre id → name (subset of official movie genre list). */
 const TMDB_GENRE_NAMES: Record<number, string> = {
   28: 'Action',
   12: 'Adventure',
@@ -58,18 +56,16 @@ function buildSearchUrl(
   query: string,
   apiKey: string
 ): string {
-  // Use a relative path (no leading slash) with a trailing-slash base URL
-  // so the /3/ segment is preserved — see config.tmdbBaseUrl.
   const url = new URL(path, baseUrl);
   url.searchParams.set('api_key', apiKey);
-  url.searchParams.set('query', query.trim());
+  url.searchParams.set('query', query);
   url.searchParams.set('language', 'en-US');
   url.searchParams.set('page', '1');
   return url.toString();
 }
 
-function parseReleaseYear(releaseDate?: string): number | undefined {
-  if (!releaseDate) {
+function parseReleaseYear(releaseDate: unknown): number | undefined {
+  if (typeof releaseDate !== 'string') {
     return undefined;
   }
 
@@ -78,7 +74,7 @@ function parseReleaseYear(releaseDate?: string): number | undefined {
 }
 
 function mapDocToResult(doc: TmdbMovieDoc): MovieSearchResult | null {
-  if (doc.id === undefined || !doc.title) {
+  if (typeof doc.id !== 'number' || typeof doc.title !== 'string') {
     return null;
   }
 
@@ -92,8 +88,8 @@ function mapDocToResult(doc: TmdbMovieDoc): MovieSearchResult | null {
     result.releaseYear = releaseYear;
   }
 
-  const primaryGenreId = doc.genre_ids?.[0];
-  if (primaryGenreId !== undefined) {
+  const primaryGenreId = Array.isArray(doc.genre_ids) ? doc.genre_ids[0] : undefined;
+  if (typeof primaryGenreId === 'number') {
     const genreName = TMDB_GENRE_NAMES[primaryGenreId];
     if (genreName) {
       result.genre = genreName;
@@ -103,10 +99,26 @@ function mapDocToResult(doc: TmdbMovieDoc): MovieSearchResult | null {
   return result;
 }
 
-/**
- * Search movies by title via the TMDB API.
- * Requires TMDB_API_KEY in the environment (see config.ts).
- */
+function readResults(payload: unknown): TmdbMovieDoc[] {
+  if (typeof payload !== 'object' || payload === null) {
+    throw new TmdbError('TMDB returned an invalid response');
+  }
+
+  const results = (payload as TmdbSearchResponse).results;
+  if (results === undefined) {
+    return [];
+  }
+  if (!Array.isArray(results)) {
+    throw new TmdbError('TMDB returned an invalid response');
+  }
+
+  return results.filter(
+    (result): result is TmdbMovieDoc =>
+      typeof result === 'object' && result !== null
+  );
+}
+
+/** Search movies by title with the TMDB API. */
 export async function searchMovies(
   query: string,
   options: { limit?: number; apiKey?: string; baseUrl?: string; searchPath?: string } = {}
@@ -124,6 +136,10 @@ export async function searchMovies(
   }
 
   const limit = options.limit ?? 10;
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new TmdbError('Search limit must be a positive integer');
+  }
+
   const baseUrl = options.baseUrl ?? config.tmdbBaseUrl;
   const searchPath = options.searchPath ?? config.tmdbSearchMoviePath;
   const url = buildSearchUrl(baseUrl, searchPath, trimmed, apiKey);
@@ -139,15 +155,14 @@ export async function searchMovies(
     throw new TmdbError(`TMDB returned HTTP ${response.status} for search query`);
   }
 
-  let payload: TmdbSearchResponse;
+  let payload: unknown;
   try {
-    payload = (await response.json()) as TmdbSearchResponse;
+    payload = await response.json();
   } catch (error) {
     throw new TmdbError('Failed to parse TMDB response as JSON', error);
   }
 
-  const results = payload.results ?? [];
-  return results
+  return readResults(payload)
     .map(mapDocToResult)
     .filter((result): result is MovieSearchResult => result !== null)
     .slice(0, limit);

@@ -1,35 +1,24 @@
-/** Central config — all env reads live here. */
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const openLibraryBaseUrl =
-  process.env.OPEN_LIBRARY_BASE_URL ?? 'https://openlibrary.org';
-
-/** Required for TMDB movie search — get a free key at https://www.themoviedb.org/settings/api */
-const tmdbApiKey = process.env.TMDB_API_KEY ?? '';
-
 export const config = {
-  openLibraryBaseUrl,
+  openLibraryBaseUrl:
+    process.env.OPEN_LIBRARY_BASE_URL ?? 'https://openlibrary.org',
   openLibrarySearchPath: '/search.json',
-  tmdbApiKey,
+  tmdbApiKey: process.env.TMDB_API_KEY ?? '',
   tmdbBaseUrl: 'https://api.themoviedb.org/3/',
   tmdbSearchMoviePath: 'search/movie',
 } as const;
 
 /**
- * Validates env vars required for movie search.
- * Call from a future app entry point (Stage 2+) before serving traffic.
- * Utils and book search work without this.
+ * Call at application startup when movie search is enabled.
+ * The application can catch and log this structured message with its logger.
  */
 export function validateMovieSearchConfig(
-  options: { tmdbApiKey?: string } = {}
+  tmdbApiKey: string = config.tmdbApiKey
 ): void {
-  const apiKey = options.tmdbApiKey ?? config.tmdbApiKey;
-  if (apiKey) {
-    return;
+  if (!tmdbApiKey) {
+    throw new Error('logName=requiredEnvVarMissing, envVar=TMDB_API_KEY');
   }
-
-  console.error('logName=requiredEnvVarMissing, envVar=TMDB_API_KEY');
-  process.exit(1);
 }

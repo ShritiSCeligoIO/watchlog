@@ -1,11 +1,14 @@
 # WatchLog — Stage 1
 
-TypeScript utility kit for a personal movie and book watchlist. Stage 1 is a pure library (no UI): typed data model, list utilities, book/movie search APIs, and unit tests.
+Stage 1 is a small TypeScript library for a movie and book watchlist. It has no
+user interface yet. It defines the data, transforms watchlist items, and searches
+two public APIs.
 
-## Prerequisites
+## Requirements
 
-- Node.js 22.11.0 (same as integrator-ui)
+- Node.js 22.11.0
 - npm
+- A TMDB API key only when using movie search
 
 ## Setup
 
@@ -14,56 +17,39 @@ npm install
 cp .env.example .env
 ```
 
-Edit `.env` and add your [TMDB API key](https://www.themoviedb.org/settings/api) for movie search. Open Library book search works without a key.
+Add a [TMDB API key](https://www.themoviedb.org/settings/api) to `.env` for
+movie search. Open Library book search does not need a key.
 
-## Scripts
+## Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm test` | Run all unit tests |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run build` | Compile `src/` to `dist/` |
+```bash
+npm test
+npm run test:watch
+npm run build
+```
+
+`npm run build` compiles the library from `src/` into `dist/`.
 
 ## Project structure
 
 ```text
 src/
-├── types/          WatchlistItem data model
-├── utils/          filter, sort, group, stats
-├── api/            Open Library + TMDB clients
-├── fixtures/       Shared mock data for tests
-└── config.ts       Environment variables (single source)
+├── types/          MovieItem, BookItem, and type guards
+├── utils/          Filter, sort, group, and statistics functions
+├── api/            Open Library and TMDB clients
+├── fixtures/       Realistic test data
+└── config.ts       The only environment-variable reader
 ```
 
-Tests live beside source files (`*.test.ts`), matching integrator-ui conventions.
+Tests live beside the files they cover as `*.test.ts`.
 
-## Try a live search
+The API key is validated in two places:
 
-```bash
-npm run build
+- `validateMovieSearchConfig()` supports fail-fast validation at app startup.
+- `searchMovies()` rejects a call that has no key.
 
-# Books (no API key)
-node --input-type=module -e "
-  import { searchBooks } from './dist/api/openLibraryClient.js';
-  console.log(await searchBooks('dune'));
-"
+The validation error uses the structured message
+`logName=requiredEnvVarMissing, envVar=TMDB_API_KEY`. A future application must
+log it through its approved logger; this library does not write to the console.
 
-# Movies (requires TMDB_API_KEY in .env)
-node --input-type=module -e "
-  import { searchMovies } from './dist/api/tmdbClient.js';
-  console.log(await searchMovies('dune'));
-"
-```
-
-## Stage 2+
-
-When you add a React app entry point, call `validateMovieSearchConfig()` from `config.ts` at startup if the app uses movie search — it fails fast when `TMDB_API_KEY` is missing.
-
-## What this stage explains
-
-See [STAGE-1.md](./STAGE-1.md) for a plain-language walkthrough of every concept
-this stage introduces.
-
-## Repository
-
-https://github.com/ShritiSCeligoIO/watchlog
+See [STAGE-1.md](./STAGE-1.md) for the beginner walkthrough.

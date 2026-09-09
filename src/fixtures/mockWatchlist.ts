@@ -1,6 +1,5 @@
 import type { WatchlistItem } from '../types/watchlistItem.js';
 
-/** Realistic mixed watchlist used across utility tests. */
 export const mockWatchlist: WatchlistItem[] = [
   {
     id: 'movie-1',
@@ -55,5 +54,3 @@ export const mockWatchlist: WatchlistItem[] = [
     releaseYear: 2019,
   },
 ];
-
-export const emptyWatchlist: WatchlistItem[] = [];

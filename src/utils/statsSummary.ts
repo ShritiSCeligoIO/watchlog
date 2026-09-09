@@ -13,16 +13,13 @@ export function statsSummary(items: WatchlistItem[]): WatchlistStats {
     };
   }
 
-  const doneCount = items.filter((item) => item.status === 'done').length;
-  const ratedDoneItems = items.filter(
-    (item): item is WatchlistItem & { rating: NonNullable<WatchlistItem['rating']> } =>
-      item.status === 'done' && hasRating(item)
-  );
+  const doneItems = items.filter((item) => item.status === 'done');
+  const ratedDoneItems = doneItems.filter(hasRating);
   const ratingSum = ratedDoneItems.reduce((sum, item) => sum + item.rating, 0);
 
   return {
     totalCount,
-    completionRate: doneCount / totalCount,
+    completionRate: doneItems.length / totalCount,
     averageRating:
       ratedDoneItems.length === 0 ? null : ratingSum / ratedDoneItems.length,
   };

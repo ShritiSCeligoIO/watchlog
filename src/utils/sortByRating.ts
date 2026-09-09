@@ -3,26 +3,25 @@ import { hasRating } from '../types/watchlistItem.js';
 
 export type SortDirection = 'asc' | 'desc';
 
-/**
- * Sort by star rating. Items without a rating sort to the end.
- * Uses destructuring when comparing pairs.
- */
+/** Sort by rating without changing the original array. */
 export function sortByRating(
   items: WatchlistItem[],
   direction: SortDirection = 'desc'
 ): WatchlistItem[] {
-  const multiplier = direction === 'asc' ? 1 : -1;
-  const unratedSortValue =
-    direction === 'asc' ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
-
   return [...items].sort((first, second) => {
-    const firstRating = hasRating(first) ? first.rating : unratedSortValue;
-    const secondRating = hasRating(second) ? second.rating : unratedSortValue;
+    if (!hasRating(first)) {
+      return hasRating(second) ? 1 : first.title.localeCompare(second.title);
+    }
 
-    if (firstRating === secondRating) {
+    if (!hasRating(second)) {
+      return -1;
+    }
+
+    const ratingDifference = first.rating - second.rating;
+    if (ratingDifference === 0) {
       return first.title.localeCompare(second.title);
     }
 
-    return (firstRating - secondRating) * multiplier;
+    return direction === 'asc' ? ratingDifference : -ratingDifference;
   });
 }

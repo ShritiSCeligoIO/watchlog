@@ -1,6 +1,5 @@
 import { config } from '../config.js';
 
-/** Normalized book result from Open Library search. */
 export interface BookSearchResult {
   id: string;
   title: string;
@@ -9,7 +8,6 @@ export interface BookSearchResult {
   genre?: string;
 }
 
-/** Shape of one document in Open Library search response. */
 interface OpenLibraryDoc {
   key?: string;
   title?: string;
@@ -32,17 +30,20 @@ export class OpenLibraryError extends Error {
   }
 }
 
-function buildSearchUrl(baseUrl: string, path: string, query: string, limit: number): string {
-  // Absolute paths (starting with /) replace the base URL path — fine for openlibrary.org root.
-  // TMDB uses a relative path + trailing slash base instead; see config.tmdbBaseUrl.
+function buildSearchUrl(
+  baseUrl: string,
+  path: string,
+  query: string,
+  limit: number
+): string {
   const url = new URL(path, baseUrl);
-  url.searchParams.set('q', query.trim());
+  url.searchParams.set('q', query);
   url.searchParams.set('limit', String(limit));
   return url.toString();
 }
 
 function mapDocToResult(doc: OpenLibraryDoc): BookSearchResult | null {
-  if (!doc.key || !doc.title) {
+  if (typeof doc.key !== 'string' || typeof doc.title !== 'string') {
     return null;
   }
 
@@ -51,27 +52,42 @@ function mapDocToResult(doc: OpenLibraryDoc): BookSearchResult | null {
     title: doc.title,
   };
 
-  const author = doc.author_name?.[0];
-  if (author) {
+  const author = Array.isArray(doc.author_name) ? doc.author_name[0] : undefined;
+  if (typeof author === 'string') {
     result.author = author;
   }
 
-  if (doc.first_publish_year !== undefined) {
+  if (typeof doc.first_publish_year === 'number') {
     result.publishYear = doc.first_publish_year;
   }
 
-  const genre = doc.subject?.[0];
-  if (genre) {
+  const genre = Array.isArray(doc.subject) ? doc.subject[0] : undefined;
+  if (typeof genre === 'string') {
     result.genre = genre;
   }
 
   return result;
 }
 
-/**
- * Search books by title via the free Open Library API.
- * Uses async/await with explicit error handling — no silent failures.
- */
+function readDocs(payload: unknown): OpenLibraryDoc[] {
+  if (typeof payload !== 'object' || payload === null) {
+    throw new OpenLibraryError('Open Library returned an invalid response');
+  }
+
+  const docs = (payload as OpenLibrarySearchResponse).docs;
+  if (docs === undefined) {
+    return [];
+  }
+  if (!Array.isArray(docs)) {
+    throw new OpenLibraryError('Open Library returned an invalid response');
+  }
+
+  return docs.filter(
+    (doc): doc is OpenLibraryDoc => typeof doc === 'object' && doc !== null
+  );
+}
+
+/** Search books by title with the Open Library API. */
 export async function searchBooks(
   query: string,
   options: { limit?: number; baseUrl?: string; searchPath?: string } = {}
@@ -82,6 +98,10 @@ export async function searchBooks(
   }
 
   const limit = options.limit ?? 10;
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new OpenLibraryError('Search limit must be a positive integer');
+  }
+
   const baseUrl = options.baseUrl ?? config.openLibraryBaseUrl;
   const searchPath = options.searchPath ?? config.openLibrarySearchPath;
   const url = buildSearchUrl(baseUrl, searchPath, trimmed, limit);
@@ -99,15 +119,14 @@ export async function searchBooks(
     );
   }
 
-  let payload: OpenLibrarySearchResponse;
+  let payload: unknown;
   try {
-    payload = (await response.json()) as OpenLibrarySearchResponse;
+    payload = await response.json();
   } catch (error) {
     throw new OpenLibraryError('Failed to parse Open Library response as JSON', error);
   }
 
-  const docs = payload.docs ?? [];
-  return docs
+  return readDocs(payload)
     .map(mapDocToResult)
     .filter((result): result is BookSearchResult => result !== null);
 }
