@@ -1,0 +1,217 @@
+/*
+ * The host's own styling. Hand-written CSS, no Tailwind and no design system —
+ * the shell is a different application and is built like one.
+ *
+ * Every rule below is written defensively, with explicit values rather than
+ * inherited ones. The reason is a real and slightly awkward property of this
+ * setup: the remote ships Tailwind, and Tailwind's preflight is a *global*
+ * reset. It lands on the document the moment the remote's stylesheet loads, and
+ * it restyles the host's own `<button>`, `<p>` and heading elements along with
+ * everything else.
+ *
+ * That is the honest tradeoff of letting a remote bring its own CSS. The shell
+ * survives it by not depending on browser defaults for anything it cares about.
+ * A host with a real design system would instead require remotes to scope their
+ * styles — Tailwind supports a class prefix and a scoped `important` selector
+ * for exactly this.
+ */
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Deliberately dark and unlike the remote, so the seam is visible on screen. */
+.shell__header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 20px;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  color: #e2e8f0;
+}
+
+.shell__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shell__logo {
+  font-size: 22px;
+  line-height: 1;
+  color: #38bdf8;
+}
+
+.shell__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #f8fafc;
+}
+
+.shell__subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.shell__nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.shell__link {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  color: #cbd5e1;
+}
+
+.shell__link:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.shell__link--active {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.shell__badge {
+  margin: 0;
+  padding: 4px 10px;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #94a3b8;
+}
+
+/*
+ * The remote renders here and controls its own background from this point down.
+ *
+ * Deliberately no `background` declaration. Setting one — even white, which
+ * looks like a safe neutral — overrides the remote's theme: WatchLog toggles
+ * between light and dark by setting a `dark` class on `<html>` and painting the
+ * body from a CSS variable, and a background on this element covers that up.
+ * The symptom is a dark-themed app rendering its cards on a white page.
+ *
+ * This is the host/remote styling boundary in one rule. The host owns the
+ * chrome above; below it the host's job is to take up space and nothing else.
+ */
+.shell__main {
+  flex: 1;
+}
+
+.remote-loading {
+  padding: 48px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.remote-error {
+  max-width: 560px;
+  margin: 48px auto;
+  padding: 24px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+
+.remote-error h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.remote-error p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.remote-error__hint code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #fee2e2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+
+.remote-error__detail {
+  margin: 0 0 16px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #fee2e2;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.remote-error button {
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #b91c1c;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.remote-error button:hover {
+  background: #991b1b;
+}
+
+/*
+ * The host's own page. Uses the same dark palette as the header so a host route
+ * reads as part of the shell rather than as an unstyled gap where the remote
+ * would otherwise be.
+ */
+.shell__page {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 48px 20px;
+  color: #cbd5e1;
+  line-height: 1.7;
+}
+
+.shell__page h1 {
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.shell__page p {
+  margin: 0 0 14px;
+  font-size: 14px;
+}
+
+.shell__page code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #1e293b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  color: #e2e8f0;
+}

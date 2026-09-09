@@ -12,7 +12,11 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "noEmit": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [
     "src/App.tsx",
@@ -31,6 +35,7 @@
     "src/queries/**/*",
     "src/features/**/*",
     "src/config.ts",
-    "src/vite-env.d.ts"
+    "src/env.d.ts",
+    "src/remote/**/*"
   ]
 }

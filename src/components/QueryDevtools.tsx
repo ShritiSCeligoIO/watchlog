@@ -11,7 +11,7 @@ const LazyDevtools = lazy(async () => {
 
 /** Renders the query cache inspector in development only. */
 export default function QueryDevtools() {
-  if (!import.meta.env.DEV) {
+  if (process.env.NODE_ENV !== 'development') {
     return null;
   }
 
