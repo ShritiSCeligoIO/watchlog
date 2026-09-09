@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import type { WatchlistItem } from '../types/watchlistItem.js';
 import { mockWatchlist } from '../fixtures/mockWatchlist.js';
 import { statsSummary } from './statsSummary.js';

@@ -1,4 +1,4 @@
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider, type QueryClient } from '@tanstack/react-query';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -24,9 +24,13 @@ function EditItemRoute() {
  * singletons that components import directly, so there is no UI-state provider
  * to wrap the tree in.
  */
-export default function App() {
+export interface AppProps {
+  queryClient?: QueryClient;
+}
+
+export default function App({ queryClient: client = queryClient }: AppProps = {}) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={client}>
       <Routes>
         <Route element={<AppLayout />}>
           <Route index element={<Navigate to="/watchlist" replace />} />

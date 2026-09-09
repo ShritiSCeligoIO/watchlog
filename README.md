@@ -1,7 +1,8 @@
-# WatchLog — Stage 8
+# WatchLog — Stage 9
 
-WatchLog tracks movies and books. Stage 8 keeps the Stage 7 application and
-replaces its Vite app build with Webpack 5 and Module Federation.
+WatchLog tracks movies and books. Stage 9 keeps the Webpack and Module
+Federation application and adds a focused Jest, Testing Library, and MSW
+safety net.
 
 ## Run it
 
@@ -33,6 +34,7 @@ npm run typecheck
 npm run typecheck:locales
 npm run build:lib
 npm run build:mfe
+npm run test:coverage
 npm run analyze
 ```
 
@@ -44,6 +46,4 @@ npm run build:app
 npm run gateway
 ```
 
-Read [STAGE-8.md](./STAGE-8.md) for the beginner guide and
-[docs/bundle-analysis.md](./docs/bundle-analysis.md) for measured bundle
-evidence.
+Read [STAGE-9.md](./STAGE-9.md) for the beginner testing guide.

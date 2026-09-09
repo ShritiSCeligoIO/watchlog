@@ -1,5 +1,4 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
 import type { WatchlistItem } from '../../types/watchlistItem.js';
 import { ItemCardProvider, useItemCardItem } from './itemCardContext.js';
 

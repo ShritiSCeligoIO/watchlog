@@ -1,25 +1,19 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
 import { applyTheme, systemTheme } from './theme.js';
 
 describe('theme helpers', () => {
-  afterEach(() => vi.unstubAllGlobals());
-
-  it('uses the operating-system color preference', () => {
-    vi.stubGlobal('window', {
-      matchMedia: vi.fn(() => ({ matches: true })),
-    });
+  it('reads dark and light system preferences', () => {
+    const matchMedia = jest.spyOn(window, 'matchMedia');
+    matchMedia.mockReturnValueOnce({ matches: true } as MediaQueryList);
+    matchMedia.mockReturnValueOnce({ matches: false } as MediaQueryList);
 
     expect(systemTheme()).toBe('dark');
+    expect(systemTheme()).toBe('light');
   });
 
-  it('applies the dark class to the document root', () => {
-    const toggle = vi.fn();
-    vi.stubGlobal('document', {
-      documentElement: { classList: { toggle } },
-    });
-
+  it('applies and removes the dark class', () => {
     applyTheme('dark');
-
-    expect(toggle).toHaveBeenCalledWith('dark', true);
+    expect(document.documentElement).toHaveClass('dark');
+    applyTheme('light');
+    expect(document.documentElement).not.toHaveClass('dark');
   });
 });

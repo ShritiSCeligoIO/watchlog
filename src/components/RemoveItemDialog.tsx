@@ -31,10 +31,10 @@ export default function RemoveItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent aria-describedby="remove-item-description">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('watchlist:removeDialog.title')}</DialogTitle>
-          <DialogDescription id="remove-item-description">
+          <DialogDescription>
             {/* The quotation marks live in the translation, not the JSX. English
                 uses “curly doubles” and Spanish uses «angle quotes», which is a
                 punctuation rule the locale has to be free to change. */}

@@ -49,6 +49,8 @@ export default (env = {}, argv = {}) => {
           use: {
             loader: 'babel-loader',
             options: {
+              // Jest compiles modules to CommonJS; production must keep ESM.
+              configFile: false,
               presets: [
                 ['@babel/preset-env', { modules: false, bugfixes: true }],
                 [

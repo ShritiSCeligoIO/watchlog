@@ -6,12 +6,18 @@ function todayIsoDate(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+const UNSAFE_PATH_CHARACTERS = /[^A-Za-z0-9._~-]+/g;
+
+function toPathSegment(id: string): string {
+  return id.replace(UNSAFE_PATH_CHARACTERS, '-');
+}
+
 export function watchlistIdForBookSearch(result: BookSearchResult): string {
-  return `book-search-${result.id}`;
+  return `book-search-${toPathSegment(result.id)}`;
 }
 
 export function watchlistIdForMovieSearch(result: MovieSearchResult): string {
-  return `movie-search-${result.id}`;
+  return `movie-search-${toPathSegment(result.id)}`;
 }
 
 export function bookSearchResultToWatchlistItem(

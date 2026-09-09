@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { isSupportedLanguage, toSupportedLanguage } from './languages.js';
 
 describe('language helpers', () => {

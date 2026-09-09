@@ -37,5 +37,6 @@
     "src/config.ts",
     "src/env.d.ts",
     "src/remote/**/*"
-  ]
+  ],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
 }

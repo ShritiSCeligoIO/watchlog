@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { formatDate, formatDecimal, formatPercent } from './format.js';
 
 describe('locale formatters', () => {

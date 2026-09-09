@@ -7,9 +7,11 @@ import { applyWatchlistUpdate } from '../../utils/applyWatchlistUpdate.js';
 
 // Mock async backend. Module state resets on reload and is never persisted.
 
-/** Enough delay for a pending state and an optimistic update to be visible. */
-export const WATCHLIST_READ_LATENCY_MS = 350;
-export const WATCHLIST_WRITE_LATENCY_MS = 600;
+const isTestRun = process.env.NODE_ENV === 'test';
+
+/** Demo latency is unnecessary in deterministic tests. */
+export const WATCHLIST_READ_LATENCY_MS = isTestRun ? 0 : 350;
+export const WATCHLIST_WRITE_LATENCY_MS = isTestRun ? 0 : 600;
 
 export class WatchlistApiError extends Error {
   readonly retryable: boolean;
@@ -28,6 +30,11 @@ export interface WatchlistWriteOptions {
 }
 
 let items: WatchlistItem[] = [...seedWatchlist];
+
+/** Reset the fake backend between tests and demos. */
+export function resetWatchlistStore(): void {
+  items = seedWatchlist.map((item) => ({ ...item }));
+}
 
 /** Latency that still honours cancellation, so an abandoned read stops waiting. */
 function sleep(ms: number, signal?: AbortSignal): Promise<void> {
