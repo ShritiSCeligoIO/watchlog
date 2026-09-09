@@ -39,6 +39,22 @@ describe('searchBooks', () => {
     ]);
   });
 
+  it('passes an abort signal to fetch', async () => {
+    const controller = new AbortController();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ docs: [] }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await searchBooks('dune', { signal: controller.signal });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://openlibrary.org/search.json?q=dune&limit=10',
+      { signal: controller.signal }
+    );
+  });
+
   it('skips invalid documents and allows missing optional fields', async () => {
     vi.stubGlobal(
       'fetch',

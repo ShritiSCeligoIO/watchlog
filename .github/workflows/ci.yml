@@ -29,5 +29,11 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Build
+      - name: Build library
         run: npm run build
+
+      - name: Type-check app
+        run: npx tsc -p tsconfig.app.json
+
+      - name: Build app
+        run: npm run build:app

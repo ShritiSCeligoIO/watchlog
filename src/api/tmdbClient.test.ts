@@ -42,6 +42,25 @@ describe('searchMovies', () => {
     ]);
   });
 
+  it('passes an abort signal to fetch', async () => {
+    const controller = new AbortController();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ results: [] }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await searchMovies('dune', {
+      apiKey: TEST_API_KEY,
+      signal: controller.signal,
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.themoviedb.org/3/search/movie?api_key=test-tmdb-api-key&query=dune&language=en-US&page=1',
+      { signal: controller.signal }
+    );
+  });
+
   it('skips invalid documents and allows missing optional fields', async () => {
     vi.stubGlobal(
       'fetch',

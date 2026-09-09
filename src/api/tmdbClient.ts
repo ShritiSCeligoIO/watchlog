@@ -121,7 +121,13 @@ function readResults(payload: unknown): TmdbMovieDoc[] {
 /** Search movies by title with the TMDB API. */
 export async function searchMovies(
   query: string,
-  options: { limit?: number; apiKey?: string; baseUrl?: string; searchPath?: string } = {}
+  options: {
+    limit?: number;
+    apiKey?: string;
+    baseUrl?: string;
+    searchPath?: string;
+    signal?: AbortSignal;
+  } = {}
 ): Promise<MovieSearchResult[]> {
   const trimmed = query.trim();
   if (!trimmed) {
@@ -146,8 +152,13 @@ export async function searchMovies(
 
   let response: Response;
   try {
-    response = await fetch(url);
+    response = options.signal
+      ? await fetch(url, { signal: options.signal })
+      : await fetch(url);
   } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw error;
+    }
     throw new TmdbError('Network request to TMDB failed', error);
   }
 
