@@ -42,11 +42,21 @@ const TMDB_GENRE_NAMES: Record<number, string> = {
 
 export class TmdbError extends Error {
   readonly causeDetail?: unknown;
+  readonly retryable: boolean;
+  readonly status?: number;
 
-  constructor(message: string, causeDetail?: unknown) {
+  constructor(
+    message: string,
+    causeDetail?: unknown,
+    options: { retryable?: boolean; status?: number } = {}
+  ) {
     super(message);
     this.name = 'TmdbError';
     this.causeDetail = causeDetail;
+    this.retryable = options.retryable ?? false;
+    if (options.status !== undefined) {
+      this.status = options.status;
+    }
   }
 }
 
@@ -159,11 +169,17 @@ export async function searchMovies(
     if (error instanceof Error && error.name === 'AbortError') {
       throw error;
     }
-    throw new TmdbError('Network request to TMDB failed', error);
+    throw new TmdbError('Network request to TMDB failed', error, {
+      retryable: true,
+    });
   }
 
   if (!response.ok) {
-    throw new TmdbError(`TMDB returned HTTP ${response.status} for search query`);
+    throw new TmdbError(
+      `TMDB returned HTTP ${response.status} for search query`,
+      undefined,
+      { status: response.status, retryable: response.status >= 500 }
+    );
   }
 
   let payload: unknown;

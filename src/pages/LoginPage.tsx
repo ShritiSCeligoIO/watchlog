@@ -1,10 +1,13 @@
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
-import { useAuth } from '../context/AuthContext';
+import { selectIsAuthenticated } from '../features/auth/authSelectors';
+import { loggedIn } from '../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 /** Provide a mock login and return visitors to the protected URL they requested. */
 export default function LoginPage() {
-  const { isAuthenticated, login } = useAuth();
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -37,7 +40,7 @@ export default function LoginPage() {
   }
 
   function handleLogin() {
-    login();
+    dispatch(loggedIn());
     navigate(destination, { replace: true, state: { filterQuery } });
   }
 

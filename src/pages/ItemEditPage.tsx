@@ -4,7 +4,9 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
-import { useWatchlistData } from '../context/WatchlistDataContext';
+import { selectItemById } from '../features/watchlist/watchlistSelectors';
+import { updateItem } from '../features/watchlist/watchlistSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import type {
   StarRating,
   WatchlistItemUpdate,
@@ -31,8 +33,8 @@ export default function ItemEditPage() {
   const { itemId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { getItemById, updateItem } = useWatchlistData();
-  const item = itemId ? getItemById(itemId) : undefined;
+  const dispatch = useAppDispatch();
+  const item = useAppSelector((state) => selectItemById(state, itemId));
   const [status, setStatus] = useState<WatchStatus>(item?.status ?? 'want');
   const [genre, setGenre] = useState(item?.genre ?? '');
   const [rating, setRating] = useState<StarRating | ''>(item?.rating ?? '');
@@ -71,7 +73,7 @@ export default function ItemEditPage() {
       update.rating = rating === '' ? null : rating;
     }
 
-    updateItem(currentItemId, update);
+    dispatch(updateItem({ id: currentItemId, update }));
     navigate(`/items/${currentItemId}`, { state: { filterQuery } });
   }
 

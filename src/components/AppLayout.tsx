@@ -1,5 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { selectIsAuthenticated } from '../features/auth/authSelectors';
+import { loggedOut } from '../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import ThemeToggle from './ThemeToggle';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
@@ -13,7 +15,8 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   );
 
 export default function AppLayout() {
-  const { isAuthenticated, logout } = useAuth();
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   return (
     <main className="mx-auto min-h-screen max-w-4xl px-4 py-6 sm:px-6">
@@ -35,7 +38,12 @@ export default function AppLayout() {
           Watchlist
         </NavLink>
         {isAuthenticated ? (
-          <Button type="button" variant="ghost" size="sm" onClick={logout}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => dispatch(loggedOut())}
+          >
             Sign out
           </Button>
         ) : (

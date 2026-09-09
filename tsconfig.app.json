@@ -22,7 +22,8 @@
     "src/components/**/*",
     "src/pages/**/*",
     "src/hooks/**/*",
-    "src/context/**/*",
+    "src/features/**/*",
+    "src/store/**/*",
     "src/constants/**/*",
     "src/index.tsx",
     "src/vite-env.d.ts"

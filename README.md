@@ -1,8 +1,8 @@
-# WatchLog — Stage 4
+# WatchLog — Stage 5
 
-WatchLog is a beginner React 19 app for tracking movies and books. Stage 4
-keeps the data, search, and routing behavior from Stages 1–3 and redesigns the
-interface with Tailwind CSS and accessible Radix UI controls.
+WatchLog is a beginner React 19 app for tracking movies and books. Stage 5
+keeps the Stage 4 UI and routing while moving shared state to Redux Toolkit.
+Redux Saga handles search and mock-auth side effects.
 
 ## Requirements
 
@@ -33,17 +33,16 @@ npm run dev
 The app opens at the URL printed by Vite. `build:lib` creates the reusable
 library in `dist/`; `build:app` creates the browser app in `build/`.
 
-## What Stage 4 adds
+## What Stage 5 adds
 
-- Responsive cards and page layouts
-- Light and dark design tokens
-- A saved theme choice applied before the first paint
-- Keyboard-friendly Tabs, Select, Dialog, and Radio Group controls
-- A confirmation dialog before removing an item
-- Small reusable UI wrappers in `src/components/ui/`
+- Feature-organized auth, search, and watchlist slices
+- A configured store, typed hooks, root reducer, and root saga
+- Debounced, cancellable search with selective transient retries
+- Pure watchlist reducers for adding, removing, and editing items
+- Reselect selectors for URL-filtered items and statistics
+- Redux DevTools support
 
-The application behavior remains local and intentionally simple: mock sign-in,
-in-memory watchlist changes, URL-backed filters, Open Library book search, and
-optional TMDB movie search.
+Watchlist changes remain in memory. Filters intentionally remain in the URL so
+filtered views survive refreshes and can be shared.
 
-See [STAGE-4.md](./STAGE-4.md) for the guided explanation and Stage 5 handoff.
+See [STAGE-5.md](./STAGE-5.md) for the mental model and guided data flow.

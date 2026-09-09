@@ -1,11 +1,22 @@
-import { useState } from 'react';
 import type { BookSearchResult } from '../api/openLibraryClient.js';
 import type { MovieSearchResult } from '../api/tmdbClient.js';
 import { isMovieSearchConfigured } from '../config.js';
 import { MIN_SEARCH_QUERY_LENGTH } from '../constants/search.js';
-import { useWatchlistData } from '../context/WatchlistDataContext';
-import type { SearchMediaType } from '../hooks/useMediaSearch';
-import { useMediaSearch } from '../hooks/useMediaSearch';
+import {
+  selectSearchError,
+  selectSearchLoading,
+  selectSearchMediaType,
+  selectSearchQuery,
+  selectSearchResults,
+} from '../features/search/searchSelectors';
+import {
+  searchMediaTypeChanged,
+  searchQueryChanged,
+  type SearchMediaType,
+} from '../features/search/searchSlice';
+import { selectAllItems } from '../features/watchlist/watchlistSelectors';
+import { addItem } from '../features/watchlist/watchlistSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import {
   bookSearchResultToWatchlistItem,
   movieSearchResultToWatchlistItem,
@@ -18,9 +29,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 /** Search remote media and add a result to the shared watchlist. */
 export default function SearchPanel() {
-  const { items, addItem } = useWatchlistData();
-  const [mediaType, setMediaType] = useState<SearchMediaType>('book');
-  const { query, setQuery, results, loading, error } = useMediaSearch(mediaType);
+  const dispatch = useAppDispatch();
+  const mediaType = useAppSelector(selectSearchMediaType);
+  const query = useAppSelector(selectSearchQuery);
+  const results = useAppSelector(selectSearchResults);
+  const loading = useAppSelector(selectSearchLoading);
+  const error = useAppSelector(selectSearchError);
+  const items = useAppSelector(selectAllItems);
 
   const watchlistIds = new Set(items.map((entry) => entry.id));
   const trimmedQuery = query.trim();
@@ -35,10 +50,12 @@ export default function SearchPanel() {
     results.length === 0;
 
   function handleAdd(result: BookSearchResult | MovieSearchResult) {
-    addItem(
-      mediaType === 'book'
-        ? bookSearchResultToWatchlistItem(result as BookSearchResult)
-        : movieSearchResultToWatchlistItem(result as MovieSearchResult)
+    dispatch(
+      addItem(
+        mediaType === 'book'
+          ? bookSearchResultToWatchlistItem(result as BookSearchResult)
+          : movieSearchResultToWatchlistItem(result as MovieSearchResult)
+      )
     );
   }
 
@@ -48,7 +65,9 @@ export default function SearchPanel() {
 
       <Tabs
         value={mediaType}
-        onValueChange={(value) => setMediaType(value as SearchMediaType)}
+        onValueChange={(value) =>
+          dispatch(searchMediaTypeChanged(value as SearchMediaType))
+        }
       >
         <TabsList aria-label="Search media type">
           <TabsTrigger value="book">Books</TabsTrigger>
@@ -61,7 +80,9 @@ export default function SearchPanel() {
             value={query}
             placeholder="Search books by title…"
             aria-label="Search books"
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) =>
+              dispatch(searchQueryChanged(event.target.value))
+            }
           />
         </TabsContent>
         <TabsContent value="movie">
@@ -71,7 +92,9 @@ export default function SearchPanel() {
             value={query}
             placeholder="Search movies by title…"
             aria-label="Search movies"
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) =>
+              dispatch(searchQueryChanged(event.target.value))
+            }
           />
         </TabsContent>
       </Tabs>

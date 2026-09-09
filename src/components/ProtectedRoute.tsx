@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { selectIsAuthenticated } from '../features/auth/authSelectors';
+import { useAppSelector } from '../store/hooks';
 
 /** Send signed-out visitors to login without losing their destination. */
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const location = useLocation();
 
   if (!isAuthenticated) {

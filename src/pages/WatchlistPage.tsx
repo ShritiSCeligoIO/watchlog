@@ -4,9 +4,14 @@ import type {
   StatusFilter,
   TypeFilter,
 } from '../constants/watchlistFilters.js';
-import { useWatchlistData } from '../context/WatchlistDataContext';
+import {
+  selectAllItems,
+  selectFilteredItems,
+  selectFilteredStats,
+} from '../features/watchlist/watchlistSelectors';
+import { removeItem } from '../features/watchlist/watchlistSlice';
 import { useWatchlistFilters } from '../hooks/useWatchlistFilters';
-import { filterWatchlistItems } from '../utils/filterWatchlistItems.js';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { Label } from '../components/ui/label';
 import {
   Select,
@@ -18,7 +23,7 @@ import {
 
 /** Render the searchable list whose filters live in the URL. */
 export default function WatchlistPage() {
-  const { items, removeItem } = useWatchlistData();
+  const dispatch = useAppDispatch();
   const {
     typeFilter,
     statusFilter,
@@ -26,10 +31,12 @@ export default function WatchlistPage() {
     setStatusFilter,
     filterQuery,
   } = useWatchlistFilters();
-  const filteredItems = filterWatchlistItems(
-    items,
-    typeFilter,
-    statusFilter
+  const items = useAppSelector(selectAllItems);
+  const filteredItems = useAppSelector((state) =>
+    selectFilteredItems(state, typeFilter, statusFilter)
+  );
+  const filteredStats = useAppSelector((state) =>
+    selectFilteredStats(state, typeFilter, statusFilter)
   );
 
   return (
@@ -76,8 +83,8 @@ export default function WatchlistPage() {
       </div>
 
       <h2 className="mb-4 text-xl font-semibold">
-        Your watchlist ({filteredItems.length}
-        {filteredItems.length !== items.length ? ` of ${items.length}` : ''})
+        Your watchlist ({filteredStats.totalCount}
+        {filteredStats.totalCount !== items.length ? ` of ${items.length}` : ''})
       </h2>
 
       {filteredItems.length === 0 ? (
@@ -89,7 +96,7 @@ export default function WatchlistPage() {
               key={item.id}
               item={item}
               filterQuery={filterQuery}
-              onRemove={removeItem}
+              onRemove={(id) => dispatch(removeItem(id))}
             />
           ))}
         </div>

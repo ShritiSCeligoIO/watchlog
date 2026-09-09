@@ -3,7 +3,9 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import RemoveItemDialog from '../components/RemoveItemDialog';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { useWatchlistData } from '../context/WatchlistDataContext';
+import { selectItemById } from '../features/watchlist/watchlistSelectors';
+import { removeItem } from '../features/watchlist/watchlistSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { hasRating, isBookItem, isMovieItem } from '../types/watchlistItem.js';
 
 /** Read itemId from the URL instead of keeping a selected item in Context. */
@@ -11,8 +13,8 @@ export default function ItemDetailPage() {
   const { itemId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { getItemById, removeItem } = useWatchlistData();
-  const item = itemId ? getItemById(itemId) : undefined;
+  const dispatch = useAppDispatch();
+  const item = useAppSelector((state) => selectItemById(state, itemId));
   const [removeOpen, setRemoveOpen] = useState(false);
 
   // Router state is external input, so accept only the string field we expect.
@@ -42,7 +44,7 @@ export default function ItemDetailPage() {
   const currentItemId = item.id;
 
   function handleRemove() {
-    removeItem(currentItemId);
+    dispatch(removeItem(currentItemId));
     navigate(watchlistDestination);
   }
 

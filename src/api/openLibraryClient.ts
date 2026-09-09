@@ -22,11 +22,21 @@ interface OpenLibrarySearchResponse {
 
 export class OpenLibraryError extends Error {
   readonly causeDetail?: unknown;
+  readonly retryable: boolean;
+  readonly status?: number;
 
-  constructor(message: string, causeDetail?: unknown) {
+  constructor(
+    message: string,
+    causeDetail?: unknown,
+    options: { retryable?: boolean; status?: number } = {}
+  ) {
     super(message);
     this.name = 'OpenLibraryError';
     this.causeDetail = causeDetail;
+    this.retryable = options.retryable ?? false;
+    if (options.status !== undefined) {
+      this.status = options.status;
+    }
   }
 }
 
@@ -120,12 +130,16 @@ export async function searchBooks(
     if (error instanceof Error && error.name === 'AbortError') {
       throw error;
     }
-    throw new OpenLibraryError('Network request to Open Library failed', error);
+    throw new OpenLibraryError('Network request to Open Library failed', error, {
+      retryable: true,
+    });
   }
 
   if (!response.ok) {
     throw new OpenLibraryError(
-      `Open Library returned HTTP ${response.status} for search query`
+      `Open Library returned HTTP ${response.status} for search query`,
+      undefined,
+      { status: response.status, retryable: response.status >= 500 }
     );
   }
 
@@ -133,7 +147,10 @@ export async function searchBooks(
   try {
     payload = await response.json();
   } catch (error) {
-    throw new OpenLibraryError('Failed to parse Open Library response as JSON', error);
+    throw new OpenLibraryError(
+      'Failed to parse Open Library response as JSON',
+      error
+    );
   }
 
   return readDocs(payload)
