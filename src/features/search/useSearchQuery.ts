@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { toErrorMessage } from '../../api/isRetryableError.js';
 import { searchBooks } from '../../api/openLibraryClient.js';
 import { searchMovies } from '../../api/tmdbClient.js';
@@ -24,6 +25,7 @@ export interface SearchQueryResult {
 
 /** Fetch and cache results for the debounced search input. */
 export function useSearchQuery(): SearchQueryResult {
+  const { t } = useTranslation('search');
   const mediaType = useUiStore((state) => state.mediaType);
   const rawQuery = useUiStore((state) => state.query);
 
@@ -48,7 +50,7 @@ export function useSearchQuery(): SearchQueryResult {
     results: data ?? [],
     // A disabled query can be pending, but it is not fetching.
     isSearching: isFetching,
-    errorMessage: error ? toErrorMessage(error, 'Search failed') : null,
+    errorMessage: error ? toErrorMessage(error, t('errors.search')) : null,
     movieSearchUnavailable,
     queryLongEnough,
     trimmedQuery,

@@ -1,4 +1,5 @@
 import { config } from '../config.js';
+import { isAbortError } from './isRetryableError.js';
 
 export interface BookSearchResult {
   id: string;
@@ -127,7 +128,7 @@ export async function searchBooks(
       ? await fetch(url, { signal: options.signal })
       : await fetch(url);
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
+    if (isAbortError(error)) {
       throw error;
     }
     throw new OpenLibraryError('Network request to Open Library failed', error, {

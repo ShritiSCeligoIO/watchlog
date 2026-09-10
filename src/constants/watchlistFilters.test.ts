@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { isStatusFilter, isTypeFilter } from './watchlistFilters.js';
 
 describe('watchlist filter URL validation', () => {

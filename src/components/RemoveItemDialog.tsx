@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogContent,
@@ -6,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog';
-import { Button } from './ui/button';
 
 interface RemoveItemDialogProps {
   open: boolean;
@@ -21,6 +22,8 @@ export default function RemoveItemDialog({
   itemTitle,
   onConfirm,
 }: RemoveItemDialogProps) {
+  const { t } = useTranslation(['watchlist', 'common']);
+
   function handleConfirm() {
     onConfirm();
     onOpenChange(false);
@@ -28,20 +31,22 @@ export default function RemoveItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent aria-describedby="remove-item-description">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Remove from watchlist?</DialogTitle>
-          <DialogDescription id="remove-item-description">
-            &ldquo;{itemTitle}&rdquo; will be removed. This cannot be undone until you
-            search and add it again.
+          <DialogTitle>{t('watchlist:removeDialog.title')}</DialogTitle>
+          <DialogDescription>
+            {/* The quotation marks live in the translation, not the JSX. English
+                uses “curly doubles” and Spanish uses «angle quotes», which is a
+                punctuation rule the locale has to be free to change. */}
+            {t('watchlist:removeDialog.description', { title: itemTitle })}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('common:actions.cancel')}
           </Button>
           <Button type="button" variant="destructive" onClick={handleConfirm}>
-            Remove
+            {t('common:actions.remove')}
           </Button>
         </DialogFooter>
       </DialogContent>

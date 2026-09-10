@@ -1,8 +1,16 @@
+import { useTranslation } from 'react-i18next';
 import { useUiStore } from '../stores/uiStore';
 import { Label } from './ui/label';
 
-/** Make the optimistic rollback path reachable on demand. */
+/**
+ * The demo control for optimistic rollback.
+ *
+ * With no real backend there is no natural way to make a write fail, and an
+ * optimistic update that never has to revert proves nothing. This switch makes
+ * the failure path reachable on demand.
+ */
 export default function ServerFailureToggle() {
+  const { t } = useTranslation('common');
   const simulateWriteFailure = useUiStore((state) => state.simulateWriteFailure);
   const setSimulateWriteFailure = useUiStore(
     (state) => state.setSimulateWriteFailure
@@ -18,10 +26,9 @@ export default function ServerFailureToggle() {
         className="mt-1 h-4 w-4 rounded border-input accent-primary"
       />
       <div>
-        <Label htmlFor="simulate-write-failure">Simulate server failure</Label>
+        <Label htmlFor="simulate-write-failure">{t('devControls.label')}</Label>
         <p className="mt-1 text-xs text-muted-foreground">
-          Makes every watchlist write reject. Add, edit, or remove an item to see
-          the change apply instantly and then roll back.
+          {t('devControls.help')}
         </p>
       </div>
     </div>

@@ -1,10 +1,12 @@
 node_modules/
 dist/
 build/
-.vite/
+reports/
 .env
 .env.local
 *.log
+server.log.*
+.*-audit.json
 .DS_Store
 coverage/
 *.tsbuildinfo

@@ -1,29 +1,37 @@
-import { describe, expect, it } from 'vitest';
 import {
   isAbortError,
   isRetryableError,
   toErrorMessage,
 } from './isRetryableError.js';
 
-describe('query error helpers', () => {
-  it('recognizes abort errors and never retries them', () => {
-    const error = new DOMException('Stopped', 'AbortError');
+describe('error classification', () => {
+  const crossRealmAbort = {
+    name: 'AbortError',
+    message: 'This operation was aborted',
+  };
 
-    expect(isAbortError(error)).toBe(true);
-    expect(isRetryableError(error)).toBe(false);
+  it('recognises structural AbortErrors across realms', () => {
+    expect(isAbortError(new DOMException('Aborted', 'AbortError'))).toBe(true);
+    expect(isAbortError(crossRealmAbort)).toBe(true);
+    expect(isAbortError(new Error('ordinary'))).toBe(false);
   });
 
-  it('retries only errors carrying a true retryable flag', () => {
-    const transient = Object.assign(new Error('Temporary'), {
-      retryable: true,
-    });
-
-    expect(isRetryableError(transient)).toBe(true);
-    expect(isRetryableError(new Error('Permanent'))).toBe(false);
+  it('retries only explicitly retryable non-abort errors', () => {
+    expect(
+      isRetryableError({ name: 'ApiError', message: '500', retryable: true })
+    ).toBe(true);
+    expect(
+      isRetryableError({ name: 'ApiError', message: '404', retryable: false })
+    ).toBe(false);
+    expect(isRetryableError({ ...crossRealmAbort, retryable: true })).toBe(false);
+    expect(isRetryableError('offline')).toBe(false);
   });
 
-  it('uses error messages and a fallback for unknown values', () => {
-    expect(toErrorMessage(new Error('Visible'), 'Fallback')).toBe('Visible');
-    expect(toErrorMessage('unknown', 'Fallback')).toBe('Fallback');
+  it('extracts structural messages and otherwise uses the fallback', () => {
+    expect(toErrorMessage(crossRealmAbort, 'fallback')).toBe(
+      'This operation was aborted'
+    );
+    expect(toErrorMessage(null, 'fallback')).toBe('fallback');
+    expect(toErrorMessage({ message: 5 }, 'fallback')).toBe('fallback');
   });
 });

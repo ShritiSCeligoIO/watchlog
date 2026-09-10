@@ -1,0 +1,22 @@
+{
+  "label": "Search",
+  "heading": "Search",
+  "mediaTypeLabel": "Search media type",
+  "books": {
+    "placeholder": "Search books by title…",
+    "label": "Search books"
+  },
+  "movies": {
+    "placeholder": "Search movies by title…",
+    "label": "Search movies"
+  },
+  "movieUnavailable": "Movie search needs TMDB_API_KEY in .env at the repo root. Restart <code>npm run dev</code> after adding it.",
+  "minLength_one": "Type at least {{count}} character to search.",
+  "minLength_other": "Type at least {{count}} characters to search.",
+  "noResults": "No results found for “{{query}}”.",
+  "searching": "Searching…",
+  "errors": {
+    "search": "Search failed",
+    "add": "Could not add that item."
+  }
+}

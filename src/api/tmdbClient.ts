@@ -1,4 +1,5 @@
 import { config } from '../config.js';
+import { isAbortError } from './isRetryableError.js';
 
 export interface MovieSearchResult {
   id: string;
@@ -166,7 +167,7 @@ export async function searchMovies(
       ? await fetch(url, { signal: options.signal })
       : await fetch(url);
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
+    if (isAbortError(error)) {
       throw error;
     }
     throw new TmdbError('Network request to TMDB failed', error, {

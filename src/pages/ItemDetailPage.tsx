@@ -1,16 +1,17 @@
+import { Trans, useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toErrorMessage } from '../api/isRetryableError.js';
 import RemoveItemDialog from '../components/RemoveItemDialog';
-import { Badge } from '../components/ui/badge';
+import { ItemCard } from '../components/itemCard/index';
 import { Button } from '../components/ui/button';
 import {
   useRemoveWatchlistItem,
   useWatchlistItem,
 } from '../features/watchlist/watchlistQueries';
 import { useUiStore } from '../stores/uiStore';
-import { hasRating, isBookItem, isMovieItem } from '../types/watchlistItem.js';
 
 export default function ItemDetailPage() {
+  const { t } = useTranslation(['watchlist', 'common']);
   const { itemId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,16 +35,23 @@ export default function ItemDetailPage() {
     ? { pathname: '/watchlist', search: backSearch }
     : '/watchlist';
 
-  // Optimistic removal briefly makes the selected item absent from the cache.
+  /**
+   * Three different reasons for having no item, which the synchronous stages
+   * could collapse into one. The removal case matters most: the optimistic
+   * write deletes the item from the cache before the server has answered, so
+   * without this branch a successful removal would flash "not found".
+   */
   if (!item) {
     if (isPending || removeItem.isPending) {
       return (
         <section
-          aria-label="Item details"
+          aria-label={t('watchlist:detail.label')}
           className="rounded-xl border bg-card p-6 shadow-sm"
         >
           <p className="text-sm text-muted-foreground" aria-live="polite">
-            {removeItem.isPending ? 'Removing…' : 'Loading item…'}
+            {removeItem.isPending
+              ? t('watchlist:detail.removing')
+              : t('watchlist:detail.loading')}
           </p>
         </section>
       );
@@ -51,24 +59,28 @@ export default function ItemDetailPage() {
 
     return (
       <section
-        aria-label="Item details"
+        aria-label={t('watchlist:detail.label')}
         className="rounded-xl border bg-card p-6 shadow-sm"
       >
         <h2 className="text-xl font-semibold">
-          {isError ? 'Could not load this item' : 'Item not found'}
+          {isError
+            ? t('watchlist:detail.loadErrorTitle')
+            : t('watchlist:detail.notFoundTitle')}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {isError ? (
-            toErrorMessage(error, 'Please try again.')
+            toErrorMessage(error, t('watchlist:errors.retry'))
           ) : (
-            <>
-              No watchlist item matches{' '}
-              <code className="rounded bg-muted px-1">{itemId}</code>.
-            </>
+            <Trans
+              i18nKey="detail.noMatch"
+              ns="watchlist"
+              values={{ itemId }}
+              components={{ code: <code className="rounded bg-muted px-1" /> }}
+            />
           )}
         </p>
         <Button variant="secondary" className="mt-4" asChild>
-          <Link to={backTo}>Back to watchlist</Link>
+          <Link to={backTo}>{t('common:actions.back')}</Link>
         </Button>
       </section>
     );
@@ -86,77 +98,20 @@ export default function ItemDetailPage() {
 
   return (
     <>
-      <section
-        aria-label="Item details"
-        className="rounded-xl border bg-card p-4 shadow-sm sm:p-6"
+      <ItemCard.Root
+        item={watchlistItem}
+        ariaLabel={t('watchlist:detail.label')}
+        className="p-4 sm:p-6"
       >
-        <h2 className="text-2xl font-bold">{watchlistItem.title}</h2>
-
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Badge variant={watchlistItem.type === 'movie' ? 'movie' : 'book'}>
-            {watchlistItem.type === 'movie' ? 'Movie' : 'Book'}
-          </Badge>
-          <Badge variant={watchlistItem.status}>{watchlistItem.status}</Badge>
+        <ItemCard.Title className="text-2xl font-bold" />
+        <div className="mt-3">
+          <ItemCard.Badges />
         </div>
-
-        <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Genre
-            </dt>
-            <dd className="mt-1 text-sm">{watchlistItem.genre}</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Added
-            </dt>
-            <dd className="mt-1 text-sm">{watchlistItem.dateAdded}</dd>
-          </div>
-          {watchlistItem.status === 'done' && hasRating(watchlistItem) && (
-            <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Rating
-              </dt>
-              <dd className="mt-1 text-sm">★ {watchlistItem.rating} / 5</dd>
-            </div>
-          )}
-          {isMovieItem(watchlistItem) && watchlistItem.director && (
-            <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Director
-              </dt>
-              <dd className="mt-1 text-sm">{watchlistItem.director}</dd>
-            </div>
-          )}
-          {isMovieItem(watchlistItem) && watchlistItem.releaseYear && (
-            <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Year
-              </dt>
-              <dd className="mt-1 text-sm">{watchlistItem.releaseYear}</dd>
-            </div>
-          )}
-          {isBookItem(watchlistItem) && watchlistItem.author && (
-            <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Author
-              </dt>
-              <dd className="mt-1 text-sm">{watchlistItem.author}</dd>
-            </div>
-          )}
-          {isBookItem(watchlistItem) && watchlistItem.publishYear && (
-            <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Published
-              </dt>
-              <dd className="mt-1 text-sm">{watchlistItem.publishYear}</dd>
-            </div>
-          )}
-        </dl>
+        <ItemCard.Details className="mt-6" />
 
         {removeItem.isError && (
           <p className="mt-6 text-sm text-destructive" role="alert">
-            {toErrorMessage(removeItem.error, 'Could not remove that item.')}
+            {toErrorMessage(removeItem.error, t('watchlist:errors.remove'))}
           </p>
         )}
 
@@ -166,7 +121,7 @@ export default function ItemDetailPage() {
               to={`/items/${watchlistItem.id}/edit`}
               state={{ filterQuery: backSearch }}
             >
-              Edit
+              {t('common:actions.edit')}
             </Link>
           </Button>
           <Button
@@ -179,13 +134,13 @@ export default function ItemDetailPage() {
               })
             }
           >
-            Remove
+            {t('common:actions.remove')}
           </Button>
           <Button variant="secondary" asChild>
-            <Link to={backTo}>Back to watchlist</Link>
+            <Link to={backTo}>{t('common:actions.back')}</Link>
           </Button>
         </div>
-      </section>
+      </ItemCard.Root>
 
       <RemoveItemDialog
         open={pendingRemoval !== null}

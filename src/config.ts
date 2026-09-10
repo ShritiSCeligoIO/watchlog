@@ -1,19 +1,5 @@
 function readEnvironmentVariable(name: string): string | undefined {
-  const browserEnvironment = (
-    import.meta as ImportMeta & {
-      env?: Record<string, string | undefined>;
-    }
-  ).env;
-
-  if (browserEnvironment?.[name]) {
-    return browserEnvironment[name];
-  }
-
-  if (typeof process !== 'undefined') {
-    return process.env[name];
-  }
-
-  return undefined;
+  return process.env[name];
 }
 
 export const config = {

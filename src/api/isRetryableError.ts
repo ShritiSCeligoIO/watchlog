@@ -1,15 +1,29 @@
-/** Read retry classification from the error instead of parsing its message. */
+interface ErrorLike {
+  name: string;
+  message: string;
+}
+
+function isErrorLike(error: unknown): error is ErrorLike {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    typeof (error as { name?: unknown }).name === 'string' &&
+    typeof (error as { message?: unknown }).message === 'string'
+  );
+}
+
+/** Structural checks also work for errors created in another realm. */
 function hasRetryableFlag(
   error: unknown
-): error is Error & { retryable: boolean } {
+): error is ErrorLike & { retryable: boolean } {
   return (
-    error instanceof Error &&
+    isErrorLike(error) &&
     typeof (error as { retryable?: unknown }).retryable === 'boolean'
   );
 }
 
 export function isAbortError(error: unknown): boolean {
-  return error instanceof Error && error.name === 'AbortError';
+  return isErrorLike(error) && error.name === 'AbortError';
 }
 
 export function isRetryableError(error: unknown): boolean {
@@ -21,5 +35,5 @@ export function isRetryableError(error: unknown): boolean {
 }
 
 export function toErrorMessage(error: unknown, fallback: string): string {
-  return error instanceof Error ? error.message : fallback;
+  return isErrorLike(error) ? error.message : fallback;
 }
