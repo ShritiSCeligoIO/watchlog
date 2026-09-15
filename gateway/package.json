@@ -1,0 +1,17 @@
+{
+  "name": "watchlog-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@celigo/logger": "2.0.6",
+    "cors": "2.8.5",
+    "express": "4.21.2"
+  }
+}

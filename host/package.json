@@ -5,7 +5,7 @@
   "description": "Minimal shell that loads the WatchLog remote at runtime",
   "type": "module",
   "engines": {
-    "node": "22.11.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "webpack serve --mode development",
