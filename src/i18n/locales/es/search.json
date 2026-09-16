@@ -10,7 +10,7 @@
     "placeholder": "Busca películas por título…",
     "label": "Buscar películas"
   },
-  "movieUnavailable": "La búsqueda de películas necesita TMDB_API_KEY en el archivo .env de la raíz del repositorio. Reinicia <code>npm run dev</code> después de añadirla.",
+  "movieUnavailable": "La búsqueda de películas no está configurada. Añade TMDB_API_KEY al entorno de compilación remoto y vuelve a compilar la aplicación.",
   "minLength_one": "Escribe al menos {{count}} carácter para buscar.",
   "minLength_other": "Escribe al menos {{count}} caracteres para buscar.",
   "noResults": "No se han encontrado resultados para «{{query}}».",
