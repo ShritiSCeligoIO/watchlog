@@ -1,13 +1,8 @@
-function readEnvironmentVariable(name: string): string | undefined {
-  return process.env[name];
-}
-
 export const config = {
   openLibraryBaseUrl:
-    readEnvironmentVariable('OPEN_LIBRARY_BASE_URL') ??
-    'https://openlibrary.org',
+    process.env.OPEN_LIBRARY_BASE_URL ?? 'https://openlibrary.org',
   openLibrarySearchPath: '/search.json',
-  tmdbApiKey: readEnvironmentVariable('TMDB_API_KEY') ?? '',
+  tmdbApiKey: process.env.TMDB_API_KEY ?? '',
   tmdbBaseUrl: 'https://api.themoviedb.org/3/',
   tmdbSearchMoviePath: 'search/movie',
 } as const;
