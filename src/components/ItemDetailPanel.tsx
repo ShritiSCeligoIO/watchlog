@@ -86,21 +86,22 @@ export default function ItemDetailPanel() {
           </div>
         )}
       </dl>
-
-      <button
-        type="button"
-        className="button danger"
-        onClick={handleRemove}
-      >
-        Remove
-      </button>
-      <button
-        type="button"
-        className="button"
-        onClick={clearSelection}
-      >
-        Close
-      </button>
+      <div className="actions">
+        <button
+          type="button"
+          className="button danger"
+          onClick={handleRemove}
+        >
+          Remove
+        </button>
+        <button
+          type="button"
+          className="button"
+          onClick={clearSelection}
+        >
+          Close
+        </button>
+      </div>
     </aside>
   );
 }
