@@ -28,22 +28,14 @@ export const createSearchInputSlice: UiSliceCreator<SearchInputSlice> = (
   query: '',
 
   setMediaType: (mediaType) =>
-    set(
-      (state) => {
-        state.mediaType = mediaType;
-      },
-      false,
-      'search/setMediaType'
-    ),
+    set((state) => {
+      state.mediaType = mediaType;
+    }),
 
   setQuery: (query) =>
-    set(
-      (state) => {
-        state.query = query;
-      },
-      false,
-      'search/setQuery'
-    ),
+    set((state) => {
+      state.query = query;
+    }),
 });
 
 export interface ThemeSlice {
@@ -56,13 +48,9 @@ export const createThemeSlice: UiSliceCreator<ThemeSlice> = (set, get) => ({
   theme: systemTheme(),
 
   setTheme: (theme) => {
-    set(
-      (state) => {
-        state.theme = theme;
-      },
-      false,
-      'theme/setTheme'
-    );
+    set((state) => {
+      state.theme = theme;
+    });
     applyTheme(theme);
   },
 
@@ -88,22 +76,14 @@ export const createRemovalSlice: UiSliceCreator<RemovalSlice> = (set) => ({
   pendingRemoval: null,
 
   requestRemoval: (target) =>
-    set(
-      (state) => {
-        state.pendingRemoval = target;
-      },
-      false,
-      'removal/request'
-    ),
+    set((state) => {
+      state.pendingRemoval = target;
+    }),
 
   cancelRemoval: () =>
-    set(
-      (state) => {
-        state.pendingRemoval = null;
-      },
-      false,
-      'removal/cancel'
-    ),
+    set((state) => {
+      state.pendingRemoval = null;
+    }),
 });
 
 export interface DevControlsSlice {
@@ -118,13 +98,9 @@ export const createDevControlsSlice: UiSliceCreator<DevControlsSlice> = (
   simulateWriteFailure: false,
 
   setSimulateWriteFailure: (value) =>
-    set(
-      (state) => {
-        state.simulateWriteFailure = value;
-      },
-      false,
-      'devControls/setSimulateWriteFailure'
-    ),
+    set((state) => {
+      state.simulateWriteFailure = value;
+    }),
 });
 
 export interface UiState
