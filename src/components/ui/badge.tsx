@@ -3,12 +3,18 @@ import { cn } from '../../lib/utils';
 
 const variants = {
   default: 'border-transparent bg-primary text-primary-foreground',
-  movie: 'border-transparent bg-type-movie/15 text-type-movie',
-  book: 'border-transparent bg-type-book/15 text-type-book',
-  want: 'border-transparent bg-status-want/20 text-status-want',
-  watching: 'border-transparent bg-status-watching/20 text-status-watching',
-  done: 'border-transparent bg-status-done/20 text-status-done',
-  genre: 'border-border bg-muted text-muted-foreground',
+  movie:
+    'border-transparent bg-[color-mix(in_srgb,var(--type-movie)_22%,transparent)] text-type-movie',
+  book:
+    'border-transparent bg-[color-mix(in_srgb,var(--type-book)_22%,transparent)] text-type-book',
+  want:
+    'border-transparent bg-[color-mix(in_srgb,var(--status-want)_22%,transparent)] text-status-want',
+  watching:
+    'border-transparent bg-[color-mix(in_srgb,var(--status-watching)_22%,transparent)] text-status-watching',
+  done:
+    'border-transparent bg-[color-mix(in_srgb,var(--status-done)_22%,transparent)] text-status-done',
+  genre:
+    'border-border bg-[color-mix(in_srgb,var(--foreground)_14%,transparent)] text-foreground',
 } as const;
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
